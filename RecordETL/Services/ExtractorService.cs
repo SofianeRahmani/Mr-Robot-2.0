@@ -96,13 +96,7 @@ namespace RecordETL.Services
                 recordSet.Records.Add(person);
             }
 
-            // Validate the recordSet
-            // if the recordSet is not valid
-            // add an error to the recordSet.Errors list
-            for (int index = 0; index < recordSet.Records.Count; index++)
-            {
-                
-            }
+
 
             return recordSet;
         }
