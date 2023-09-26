@@ -18,7 +18,9 @@ namespace RecordETL.Services
             // add an error to the recordSet.Errors list
             for (int index = 0; index < recordSet.Records.Count; index++)
             {
-                
+                // Validate using RuleSet 1
+                List<Error> errors = ValidateRuleSet1(recordSet.Records[index], index);
+                recordSet.Errors.AddRange(errors);
             }
 
 
@@ -35,7 +37,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-001",
-                    Description = "NumeroMembre is required",
+                    Description_EN = "MemberNumber is required",
+                    Description_FR = "NumeroMembre est requis",
                     RecordIndex = index
                 };
 
@@ -48,7 +51,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-002",
-                    Description = "Nom is required",
+                    Description_EN = "Lastname is required",
+                    Description_FR = "Nom est requis",
                     RecordIndex = index
                 };
 
@@ -61,7 +65,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-003",
-                    Description = "Prenom is required",
+                    Description_EN = "Name is required",
+                    Description_FR = "Prenom est requis",
                     RecordIndex = index
                 };
 
@@ -74,7 +79,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-004",
-                    Description = "Statut is required",
+                    Description_EN = "Status is required",
+                    Description_FR = "Statut est requis",
                     RecordIndex = index
                 };
 
@@ -87,7 +93,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-005",
-                    Description = "DateStatut is required",
+                    Description_EN = "DateStatus is required",
+                    Description_FR = "DateStatut est requis",
                     RecordIndex = index
                 };
 
@@ -100,7 +107,8 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-006",
-                    Description = "IdSystemeSource is required",
+                    Description_EN = "IdSystemSource is required",
+                    Description_FR = "IdSystemeSource est requis",
                     RecordIndex = index
                 };
 
@@ -113,14 +121,14 @@ namespace RecordETL.Services
                 var error = new Error()
                 {
                     Code = "ERR-007",
-                    Description = "Secteur is required",
+                    Description_EN = "Sector is required",
+                    Description_FR = "Secteur est requis",
                     RecordIndex = index
                 };
 
                 errors.Add(error);
             }
-
-
+            
             return errors;
         }
 
