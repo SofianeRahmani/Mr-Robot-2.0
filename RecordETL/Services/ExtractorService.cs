@@ -9,7 +9,7 @@ namespace RecordETL.Services
     {
 
 
-        public RecordSet Extract(string filePath, int pageIndex)
+        public RecordSet Extract(string filePath, int pageIndex, List<int> columns)
         {
             RecordSet recordSet = new RecordSet();
             recordSet.Records = new List<Record>();
@@ -28,7 +28,7 @@ namespace RecordETL.Services
             var worksheet = workbook.Worksheets[pageIndex];
 
 
-            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            for (int row = 4; row <= worksheet.Dimension.End.Row; row++)
             {
                 // extract the attributes of Record and sort them by the index
                 
