@@ -7,7 +7,7 @@ namespace RecordETL.Services
     {
 
 
-        public RecordSet Validate(RecordSet recordSet)
+        public static RecordSet Validate(RecordSet recordSet)
         {
             // Validate the recordSet
             // if the recordSet is not valid
@@ -24,7 +24,7 @@ namespace RecordETL.Services
         }
 
 
-        private List<Error> ValidateRuleSet1(Record record, int index)
+        private static List<Error> ValidateRuleSet1(Record record, int index)
         {
             List<Error> errors = new List<Error>();
             // Rule 1: Required field NumeroMembre
