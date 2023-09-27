@@ -112,13 +112,26 @@ namespace RecordETL.Services
             }
 
             // Rule 7: Required field Secteur
-            if (string.IsNullOrEmpty(record.Secteur))
+            if (string.IsNullOrEmpty(record.Secteur_EN))
             {
                 var error = new Error()
                 {
                     Code = "ERR-007",
-                    Description_EN = "Sector is required",
-                    Description_FR = "Secteur est requis",
+                    Description_EN = "Sector EN is required",
+                    Description_FR = "Secteur EN est requis",
+                    RecordIndex = index
+                };
+
+                errors.Add(error);
+            }
+
+            if (string.IsNullOrEmpty(record.Secteur_FR))
+            {
+                var error = new Error()
+                {
+                    Code = "ERR-007",
+                    Description_EN = "Sector Fr is required",
+                    Description_FR = "Secteur Fr est requis",
                     RecordIndex = index
                 };
 
