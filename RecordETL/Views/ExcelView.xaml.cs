@@ -33,6 +33,8 @@ namespace RecordETL.Views
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             // Process the Excel file, e.g., read its content.
+
+            DropArea.Content = files[0];
         }
     }
 }
