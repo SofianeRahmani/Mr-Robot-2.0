@@ -27,20 +27,30 @@
          </Button>
       </StackPanel>
 
-      <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedColumns}" AutoGenerateColumns="False" CanUserAddRows="False">
-         <DataGrid.Columns>
-            <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
+      <Grid Grid.Row="1">
+         <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+         </Grid.ColumnDefinitions>
+
+         <DataGrid ItemsSource="{Binding SelectedColumns}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+               <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
 
 
-            <DataGridTemplateColumn Header="Extracted Column Name">
-               <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                     <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AvailableColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                  </DataTemplate>
-               </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+               <DataGridTemplateColumn Header="Extracted Column Name">
+                  <DataGridTemplateColumn.CellTemplate>
+                     <DataTemplate>
+                        <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AvailableColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+               </DataGridTemplateColumn>
 
-         </DataGrid.Columns>
-      </DataGrid>
+            </DataGrid.Columns>
+         </DataGrid>
+
+
+         <DataGrid Grid.Column="1" ItemsSource="{Binding SelectedColumns}" AutoGenerateColumns="True"></DataGrid>
+      </Grid>
    </Grid>
 </UserControl>

@@ -86,14 +86,20 @@ namespace RecordETL.ViewModels
                     new RelayCommand(execute: _ =>
                     {
                         AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
-
-                        foreach (var column in SelectedColumns)
-                        {
-                            Debug.WriteLine(column.Name);
-                        }
-
                     },
                     o => _excelPath != "");
+            }
+        }
+
+        public ICommand? ValidateCommand
+        {
+            get
+            {
+                return new RelayCommand(execute: _ =>
+                {
+                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns);
+                    ValidatorService.Validate(recordSet);
+                });
             }
         }
     }

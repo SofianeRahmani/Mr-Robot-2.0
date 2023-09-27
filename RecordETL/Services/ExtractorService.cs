@@ -32,7 +32,7 @@ namespace RecordETL.Services
             return columns;
         }
 
-        public static RecordSet Extract(string filePath, int pageIndex, List<int> columns)
+        public static RecordSet Extract(string filePath, int pageIndex, List<AttributeIndex> columns)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -57,34 +57,34 @@ namespace RecordETL.Services
             {
                 // extract the attributes of Record and sort them by the index
 
-                var NumeroMembre = worksheet.Cells[row, columns[1]].Text;
-                var Nom = worksheet.Cells[row, columns[2]].Text;
-                var Prenom = worksheet.Cells[row, columns[3]].Text;
-                var Sexe = worksheet.Cells[row, columns[4]].Text;
-                var CourrielTravail = worksheet.Cells[row, columns[5]].Text;
-                var CourrielPersonnel = worksheet.Cells[row, columns[6]].Text;
-                var CourrielAutre = worksheet.Cells[row, columns[7]].Text;
-                var Telephone = worksheet.Cells[row, columns[8] ].Text;
-                var TelephoneTravail = worksheet.Cells[row, columns[9]].Text;
-                var TelephoneCellulaire = worksheet.Cells[row, columns[10]].Text;
-                var Adresse = worksheet.Cells[row, columns[11]].Text;
-                var Ville = worksheet.Cells[row, columns[12]].Text;
-                var Province = worksheet.Cells[row, columns[13]].Text;
-                var CodePostal = worksheet.Cells[row, columns[14]].Text;
-                var Nas = worksheet.Cells[row, columns[15]].Text;
-                var Categories = worksheet.Cells[row, columns[16]].Text;
-                var DateNaissance = worksheet.Cells[row, columns[17]].Text;
-                var DateAnciennete = worksheet.Cells[row, columns[18]].Text;
-                var Anciennete = worksheet.Cells[row, columns[19]].Text;
-                var DateEmbauche = worksheet.Cells[row, columns[20]].Text;
-                var Statut = worksheet.Cells[row, columns[21]].Text;
-                var DateStatut = worksheet.Cells[row, columns[22]].Text;
-                var IdSystemeSource = worksheet.Cells[row, columns[23]].Text;
-                var Secteur = worksheet.Cells[row, columns[24]].Text;
-                var StatutPersonne = worksheet.Cells[row, columns[25]].Text;
-                var IdentifiantAlternatif = worksheet.Cells[row, columns[26]].Text;
-                var InfosComplementaires1 = worksheet.Cells[row, columns[27]].Text;
-                var InfosComplementaires2 = worksheet.Cells[row, columns[28]].Text;
+                var NumeroMembre = columns[1].Index != -1 ? worksheet.Cells[row, columns[1].Index].Text : null;
+                var Nom = columns[2].Index != -1 ?worksheet.Cells[row, columns[2].Index].Text : null;
+                var Prenom = columns[3].Index != -1 ?worksheet.Cells[row, columns[3].Index].Text : null;
+                var Sexe = columns[4].Index != -1 ? worksheet.Cells[row, columns[4].Index].Text : null;
+                var CourrielTravail = columns[5].Index != -1 ? worksheet.Cells[row, columns[5].Index].Text : null;
+                var CourrielPersonnel = columns[6].Index != -1 ? worksheet.Cells[row, columns[6].Index].Text : null;
+                var CourrielAutre = columns[7].Index != -1 ? worksheet.Cells[row, columns[7].Index].Text : null;
+                var Telephone = columns[8].Index != -1 ? worksheet.Cells[row, columns[8].Index ].Text : null;
+                var TelephoneTravail = columns[9].Index != -1 ? worksheet.Cells[row, columns[9].Index].Text : null;
+                var TelephoneCellulaire = columns[10].Index != -1 ? worksheet.Cells[row, columns[10].Index].Text : null;
+                var Adresse = columns[11].Index != -1 ? worksheet.Cells[row, columns[11].Index].Text : null;
+                var Ville = columns[12].Index != -1 ? worksheet.Cells[row, columns[12].Index].Text : null;
+                var Province = columns[13].Index != -1 ? worksheet.Cells[row, columns[13].Index].Text : null;
+                var CodePostal = columns[14].Index != -1 ? worksheet.Cells[row, columns[14].Index].Text : null;
+                var Nas = columns[15].Index != -1 ? worksheet.Cells[row, columns[15].Index].Text : null;
+                var Categories = columns[16].Index != -1 ? worksheet.Cells[row, columns[16].Index].Text : null;
+                var DateNaissance = columns[17].Index != -1 ? worksheet.Cells[row, columns[17].Index].Text : null;
+                var DateAnciennete = columns[18].Index != -1 ? worksheet.Cells[row, columns[18].Index].Text : null;
+                var Anciennete = columns[19].Index != -1 ? worksheet.Cells[row, columns[19].Index].Text : null;
+                var DateEmbauche = columns[20].Index != -1 ? worksheet.Cells[row, columns[20].Index].Text : null;
+                var Statut = columns[21].Index != -1 ? worksheet.Cells[row, columns[21].Index].Text : null;
+                var DateStatut = columns[22].Index != -1 ? worksheet.Cells[row, columns[22].Index].Text : null;
+                var IdSystemeSource = columns[23].Index != -1 ? worksheet.Cells[row, columns[23].Index].Text : null;
+                var Secteur = columns[24].Index != -1 ? worksheet.Cells[row, columns[24].Index].Text : null;
+                var StatutPersonne = columns[25].Index != -1 ? worksheet.Cells[row, columns[25].Index].Text : null;
+                var IdentifiantAlternatif = columns[26].Index != -1 ? worksheet.Cells[row, columns[26].Index].Text : null;
+                var InfosComplementaires1 = columns[27].Index != -1 ? worksheet.Cells[row, columns[27].Index].Text : null;
+                var InfosComplementaires2 = columns[28].Index != -1 ? worksheet.Cells[row, columns[28].Index].Text : null;
 
                 var person = new Record()
                 {
