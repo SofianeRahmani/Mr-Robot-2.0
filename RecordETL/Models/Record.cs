@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RecordETL.Models
+﻿namespace RecordETL.Models
 {
     public class Record
     {
@@ -31,10 +25,26 @@ namespace RecordETL.Models
         public string Statut { get; set; }
         public string DateStatut { get; set; }
         public string IdSystemeSource { get; set; }
-        public string Secteur { get; set; }
+        
+        public string Secteur_FR { get; set; }
+        public string Secteur_EN { get; set; }
+        public string Acronyme { get; set; }
+        
         public string StatutPersonne { get; set; }
         public string IdentifiantAlternatif { get; set; }
         public string InfosComplementaires1 { get; set; }
         public string InfosComplementaires2 { get; set; }
+        
+        public string Employeur { get; set; }
+        public string NumeroEmployeur { get; set; }
+        public string Fonction { get; set; }
+        public string DateDebut { get; set; }
+        public string DateFin { get; set; }
+        public string InfoComplementairesEmploi { get; set; }
+        
+        public string IdPastille { get; set; }
+        public string DescriptionPastille { get; set; }
+        public string DateEvenement { get; set; }
+        public string Note { get; set; }
     }
 }
