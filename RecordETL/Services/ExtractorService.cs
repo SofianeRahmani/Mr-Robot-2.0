@@ -87,8 +87,18 @@ namespace RecordETL.Services
                 var InfosComplementaires1 = positions[26].Index != -1 ? worksheet.Cells[row, positions[26].Index + 1].Text : null;
                 var InfosComplementaires2 = positions[27].Index != -1 ? worksheet.Cells[row, positions[27].Index + 1].Text : null;
 
+                var Employeur = positions[28].Index != -1 ? worksheet.Cells[row, positions[28].Index + 1].Text : null;
+                var NumeroEmployeur = positions[29].Index != -1 ? worksheet.Cells[row, positions[29].Index + 1].Text : null;
+                var Fonction = positions[30].Index != -1 ? worksheet.Cells[row, positions[30].Index + 1].Text : null;
+                var DateDebut = positions[31].Index != -1 ? worksheet.Cells[row, positions[31].Index + 1].Text : null;
+                var DateFin = positions[32].Index != -1 ? worksheet.Cells[row, positions[32].Index + 1].Text : null;
+                var InfosComplementairesEmplois = positions[33].Index != -1 ? worksheet.Cells[row, positions[33].Index + 1].Text : null;
+
+
+
                 var person = new Record()
                 {
+                    row = row,
                     NumeroMembre = NumeroMembre,
                     Nom = Nom,
                     Prenom = Prenom,
@@ -116,7 +126,14 @@ namespace RecordETL.Services
                     StatutPersonne = StatutPersonne,
                     IdentifiantAlternatif = IdentifiantAlternatif,
                     InfosComplementaires1 = InfosComplementaires1,
-                    InfosComplementaires2 = InfosComplementaires2
+                    InfosComplementaires2 = InfosComplementaires2,
+
+                    Employeur = Employeur,
+                    NumeroEmployeur = NumeroEmployeur,
+                    Fonction = Fonction,
+                    DateDebut = DateDebut,
+                    DateFin = DateFin,
+                    InfosComplementairesEmplois = InfosComplementairesEmplois
                 };
 
                 recordSet.Records.Add(person);
