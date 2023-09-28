@@ -5,8 +5,6 @@ namespace RecordETL.Services
 {
     public class ValidatorService
     {
-
-
         public static RecordSet Validate(RecordSet recordSet)
         {
             // Validate the recordSet

@@ -3,6 +3,8 @@
     public class AttributeIndex
     {
         public string Name { get; set; }
-        public int Index { get; set; }
+
+        private int _index = -1;
+        public int Index { get => _index; set => _index = value; }
     }
 }

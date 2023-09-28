@@ -1,4 +1,14 @@
-﻿<UserControl x:Class="RecordETL.Views.ExcelView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:RecordETL.Views" mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl 
+   x:Class="RecordETL.Views.ExcelView" 
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+   xmlns:local="clr-namespace:RecordETL.Views" 
+   mc:Ignorable="d" 
+   d:DesignHeight="450" 
+   d:DesignWidth="800">
+   
    <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="Auto" />
@@ -27,7 +37,8 @@
 
       <Grid Grid.Row="1">
          <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
          </Grid.ColumnDefinitions>
 
@@ -46,8 +57,9 @@
             </DataGrid.Columns>
          </DataGrid>
 
-
          <DataGrid Grid.Column="1" ItemsSource="{Binding SelectedColumns}" AutoGenerateColumns="True"></DataGrid>
+
+         <DataGrid Grid.Column="2" ItemsSource="{Binding RecordSet.Records}" AutoGenerateColumns="True"></DataGrid>
       </Grid>
    </Grid>
 </UserControl>

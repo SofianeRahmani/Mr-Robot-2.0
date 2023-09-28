@@ -29,6 +29,15 @@
         public string StatutPersonne { get; set; }
         public string IdentifiantAlternatif { get; set; }
         public string InfosComplementaires1 { get; set; }
-        public string InfosComplementaires2 { get; set; }        
+        public string InfosComplementaires2 { get; set; }
+
+        public string Employeur { get; set; }
+        public string NumeroEmployeur { get; set; }
+        public string Fonction { get; set; }
+        public string DateDebut { get; set; }
+        public string DateFin { get; set; }
+        public string InfosComplementairesEmplois { get; set; }
+
+
     }
 }

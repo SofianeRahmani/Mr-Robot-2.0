@@ -77,6 +77,12 @@ namespace RecordETL.ViewModels
         }
 
 
+        private RecordSet _recordSet = new RecordSet();
+        public RecordSet RecordSet
+        {
+            get => _recordSet;
+            set => SetField(ref _recordSet, value);
+        }
 
         public ICommand? ExtractCommand
         {
@@ -98,7 +104,7 @@ namespace RecordETL.ViewModels
                 return new RelayCommand(execute: _ =>
                 {
                     var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns);
-                    ValidatorService.Validate(recordSet);
+                    RecordSet = ValidatorService.Validate(recordSet);
                 });
             }
         }
