@@ -39,9 +39,14 @@ namespace RecordETL.ViewModels
                 new AttributeIndex() { Name = "StatutPersonne", Index = -1 },
                 new AttributeIndex() { Name = "IdentifiantAlternatif", Index = -1 },
                 new AttributeIndex() { Name = "InfosComplementaires1", Index = -1 },
-                new AttributeIndex() { Name = "InfosComplementaires2", Index = -1 },
-                new AttributeIndex() { Name = "Secteur_EN", Index = -1 },
-                new AttributeIndex() { Name = "Secteur_FR", Index = -1 }
+                new AttributeIndex() { Name = "InfosComplementaires2", Index = -1 },                
+                
+                new AttributeIndex() { Name = "Employeur", Index = -1 },
+                new AttributeIndex() { Name = "NumeroEmployeur", Index = -1 },
+                new AttributeIndex() { Name = "Fonction", Index = -1 },
+                new AttributeIndex() { Name = "DateDebut", Index = -1 },
+                new AttributeIndex() { Name = "DateFin", Index = -1 },
+                new AttributeIndex() { Name = "InfosComplementairesEmplois", Index = -1 }
             };
 
         }
