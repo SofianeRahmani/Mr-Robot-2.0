@@ -2,11 +2,14 @@
 {
     public class Record
     {
-        public int row {get; set;}
+        public int Row {get; set;}
 
         public string NumeroMembre { get; set; }
         public string Nom { get; set; }
         public string Prenom { get; set; }
+        public string SecondNom { get; set; }
+        public string SecondPrenom { get; set; }
+
         public string Sexe { get; set; }
         public string CourrielTravail { get; set; }
         public string CourrielPersonnel { get; set; }

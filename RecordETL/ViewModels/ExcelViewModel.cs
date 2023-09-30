@@ -1,5 +1,6 @@
 ﻿using RecordETL.Models;
 using RecordETL.Services;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -9,52 +10,27 @@ namespace RecordETL.ViewModels
     {
         public ExcelViewModel()
         {
-            SelectedColumns = new List<AttributeIndex>
+            SelectedColumns = new List<AttributeIndex>();
+            Type type = typeof(Record);
+
+            foreach (var property in type.GetProperties())
             {
-                new AttributeIndex() { Name = "NumeroMembre", Index = -1 },
-                new AttributeIndex() { Name = "Nom", Index = -1 },
-                new AttributeIndex() { Name = "Prenom", Index = -1 },
-                new AttributeIndex() { Name = "Sexe", Index = -1 },
-                new AttributeIndex() { Name = "CourrielTravail", Index = -1 },
-                new AttributeIndex() { Name = "CourrielPersonnel", Index = -1 },
-                new AttributeIndex() { Name = "CourrielAutre", Index = -1 },
-                new AttributeIndex() { Name = "Telephone", Index = -1 },
-                new AttributeIndex() { Name = "TelephoneTravail", Index = -1 },
-                new AttributeIndex() { Name = "TelephoneCellulaire", Index = -1 },
-                new AttributeIndex() { Name = "Adresse", Index = -1 },
-                new AttributeIndex() { Name = "Ville", Index = -1 },
-                new AttributeIndex() { Name = "Province", Index = -1 },
-                new AttributeIndex() { Name = "CodePostal", Index = -1 },
-                new AttributeIndex() { Name = "Nas", Index = -1 },
-                new AttributeIndex() { Name = "Categories", Index = -1 },
-                new AttributeIndex() { Name = "DateNaissance", Index = -1 },
-                new AttributeIndex() { Name = "DateAnciennete", Index = -1 },
-                new AttributeIndex() { Name = "Anciennete", Index = -1 },
-                new AttributeIndex() { Name = "DateEmbauche", Index = -1 },
-                new AttributeIndex() { Name = "Statut", Index = -1 },
-                new AttributeIndex() { Name = "DateStatut", Index = -1 },
-                new AttributeIndex() { Name = "IdSystemeSource", Index = -1 },
-                new AttributeIndex() { Name = "Secteur", Index = -1 },
-                new AttributeIndex() { Name = "StatutPersonne", Index = -1 },
-                new AttributeIndex() { Name = "IdentifiantAlternatif", Index = -1 },
-                new AttributeIndex() { Name = "InfosComplementaires1", Index = -1 },
-                new AttributeIndex() { Name = "InfosComplementaires2", Index = -1 },                
-                
-                new AttributeIndex() { Name = "Employeur", Index = -1 },
-                new AttributeIndex() { Name = "NumeroEmployeur", Index = -1 },
-                new AttributeIndex() { Name = "Fonction", Index = -1 },
-                new AttributeIndex() { Name = "DateDebut", Index = -1 },
-                new AttributeIndex() { Name = "DateFin", Index = -1 },
-                new AttributeIndex() { Name = "InfosComplementairesEmplois", Index = -1 }
-            };
+                if (property.Name == "Row") continue;
 
-
+                SelectedColumns.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
+            }
 
             AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
         }
 
-        private string? _excelPath = @"C:\Users\Bucket\Desktop\sample.xlsx";
+        private bool _isAmerican = false;
+        public bool IsAmerican
+        {
+            get => _isAmerican;
+            set => SetField(ref _isAmerican, value);
+        }
 
+        private string? _excelPath = @"C:\Users\Bucket\Desktop\sample.xlsx";
         public string? ExcelPath
         {
             get => _excelPath;
@@ -104,13 +80,14 @@ namespace RecordETL.ViewModels
             }
         }
 
+
         public ICommand? ValidateCommand
         {
             get
             {
                 return new RelayCommand(execute: _ =>
                 {
-                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns);
+                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns, IsAmerican);
                     RecordSet = ValidatorService.Validate(recordSet);
                 });
             }
