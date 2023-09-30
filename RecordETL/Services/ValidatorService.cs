@@ -34,7 +34,7 @@ namespace RecordETL.Services
                     Code = "ERR-001",
                     Description_EN = "MemberNumber is required",
                     Description_FR = "NumeroMembre est requis",
-                    RecordIndex = record.row
+                    RecordIndex = record.Row
                 };
 
                 errors.Add(error);
@@ -166,7 +166,7 @@ namespace RecordETL.Services
                             Code = "ERR-007",
                             Description_EN = "Sector is required",
                             Description_FR = "Secteur est requis",
-                            RecordIndex = record.row
+                            RecordIndex = record.Row
                         };
 
                         recordSet.Errors.Add(error);
