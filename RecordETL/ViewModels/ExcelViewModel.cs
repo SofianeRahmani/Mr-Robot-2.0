@@ -1,7 +1,6 @@
 ﻿using RecordETL.Models;
 using RecordETL.Services;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Input;
 
 namespace RecordETL.ViewModels
@@ -49,6 +48,9 @@ namespace RecordETL.ViewModels
                 new AttributeIndex() { Name = "InfosComplementairesEmplois", Index = -1 }
             };
 
+
+
+            AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
         }
 
         private string? _excelPath = @"C:\Users\Bucket\Desktop\sample.xlsx";
