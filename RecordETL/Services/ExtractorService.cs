@@ -41,7 +41,7 @@ namespace RecordETL.Services
             return column != -1 ? worksheet.Cells[row, column + 1].Text : null;
         }
 
-        public static RecordSet Extract(string filePath, int pageIndex, List<AttributeIndex> positions, bool isAmerican)
+        public static RecordSet Extract(string filePath, int pageIndex, List<AttributeIndex> positions, bool isAmerican, string TerminaisonCourriel)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -86,15 +86,15 @@ namespace RecordETL.Services
                 person.TelephoneTravail = FormatPhoneNumber(person.TelephoneTravail);
                 person.TelephoneCellulaire = FormatPhoneNumber(person.TelephoneCellulaire);
 
-                if (person.TerminaisonCourriel == null)
+                if (TerminaisonCourriel == null)
                 {
-                    person.CourrielTravail = person.CourrielTravail?.Trim() + person.TerminaisonCourriel;
-                    person.CourrielPersonnel = person.CourrielPersonnel?.Trim() + person.TerminaisonCourriel;
-                    person.CourrielAutre = person.CourrielAutre?.Trim() + person.TerminaisonCourriel;
+                    person.CourrielTravail = person.CourrielTravail?.Trim();
+                    person.CourrielPersonnel = person.CourrielPersonnel?.Trim();
+                    person.CourrielAutre = person.CourrielAutre?.Trim() ;
                 }
                 else
                 {
-                    if (!person.CourrielTravail.EndsWith(person.TerminaisonCourriel))
+                    if (!person.CourrielTravail.EndsWith(TerminaisonCourriel))
                     {
                         person.CourrielAutre = person.CourrielTravail;
                         person.CourrielTravail = null;

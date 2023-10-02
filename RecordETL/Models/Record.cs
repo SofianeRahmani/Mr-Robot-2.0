@@ -11,7 +11,6 @@
         public string SecondPrenom { get; set; }
 
         public string Sexe { get; set; }
-        public string TerminaisonCourriel { get; set; }
         public string CourrielTravail { get; set; }
         public string CourrielPersonnel { get; set; }
         public string CourrielAutre { get; set; }

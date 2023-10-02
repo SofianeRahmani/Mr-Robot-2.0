@@ -25,6 +25,9 @@
             <ComboBoxItem Content="Page 4" />
          </ComboBox>
 
+         <TextBlock>Terminaison Courriel</TextBlock>
+         <TextBox Text="{Binding TerminaisonCourriel, UpdateSourceTrigger=PropertyChanged}" Margin="10" />
+         
          <Button Command="{Binding ExtractCommand}" Margin="10">
             Extract
          </Button>
