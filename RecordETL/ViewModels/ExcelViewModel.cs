@@ -30,6 +30,13 @@ namespace RecordETL.ViewModels
             set => SetField(ref _isAmerican, value);
         }
 
+        private string _terminaisonCourriel;
+        public string TerminaisonCourriel
+        {
+            get => _terminaisonCourriel;
+            set => SetField(ref _terminaisonCourriel, value);
+        }
+
         private string? _excelPath = @"";
         public string? ExcelPath
         {
@@ -87,7 +94,7 @@ namespace RecordETL.ViewModels
             {
                 return new RelayCommand(execute: _ =>
                 {
-                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns, IsAmerican);
+                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns, IsAmerican, TerminaisonCourriel);
                     RecordSet = ValidatorService.Validate(recordSet);
                 });
             }
