@@ -20,7 +20,7 @@ namespace RecordETL.ViewModels
                 SelectedColumns.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
             }
 
-            AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
+            //AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
         }
 
         private bool _isAmerican = false;
@@ -30,7 +30,7 @@ namespace RecordETL.ViewModels
             set => SetField(ref _isAmerican, value);
         }
 
-        private string? _excelPath = @"C:\Users\Bucket\Desktop\sample.xlsx";
+        private string? _excelPath = @"";
         public string? ExcelPath
         {
             get => _excelPath;

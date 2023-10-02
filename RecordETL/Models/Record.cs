@@ -11,12 +11,14 @@
         public string SecondPrenom { get; set; }
 
         public string Sexe { get; set; }
+        public string TerminaisonCourriel { get; set; }
         public string CourrielTravail { get; set; }
         public string CourrielPersonnel { get; set; }
         public string CourrielAutre { get; set; }
         public string Telephone { get; set; }
         public string TelephoneTravail { get; set; }
         public string TelephoneCellulaire { get; set; }
+        public string NumeroAppartement { get; set; }
         public string Adresse { get; set; }
         public string Ville { get; set; }
         public string Province { get; set; }
@@ -42,7 +44,5 @@
         public string DateDebut { get; set; }
         public string DateFin { get; set; }
         public string InfosComplementairesEmplois { get; set; }
-
-
     }
 }

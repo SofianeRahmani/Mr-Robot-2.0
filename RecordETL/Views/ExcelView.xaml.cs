@@ -5,6 +5,7 @@ namespace RecordETL.Views
 {
     public partial class ExcelView : UserControl
     {
+        ViewModels.ExcelViewModel ViewModel => (ViewModels.ExcelViewModel)DataContext;
         public ExcelView()
         {
             InitializeComponent();
@@ -33,8 +34,8 @@ namespace RecordETL.Views
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             // Process the Excel file, e.g., read its content.
-
-            DropArea.Content = files[0];
+            
+            ViewModel.ExcelPath = files[0];
         }
     }
 }
