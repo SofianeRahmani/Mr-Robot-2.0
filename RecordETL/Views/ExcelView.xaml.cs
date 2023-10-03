@@ -37,5 +37,20 @@ namespace RecordETL.Views
             
             ViewModel.ExcelPath = files[0];
         }
+
+        private void DropArea_Click(object sender, RoutedEventArgs e)
+        {
+            // write the code to open file dialog and select only excel files
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.DefaultExt = ".xlsx";
+            dlg.Filter = "Excel Files (*.xlsx)|*.xlsx";
+            bool? result = dlg.ShowDialog();
+            if (result == true)
+            {
+                ViewModel.ExcelPath = dlg.FileName;
+            }
+
+
+        }
     }
 }

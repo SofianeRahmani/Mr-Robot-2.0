@@ -15,15 +15,10 @@
       </Grid.RowDefinitions>
 
       <StackPanel>
-         <Button x:Name="DropArea" Content="{Binding ExcelPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Height="80">
+         <Button x:Name="DropArea" Content="{Binding ExcelPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Height="80"
+                 Click="DropArea_Click">
+            
          </Button>
-
-         <ComboBox SelectedIndex="{Binding SheetIndex, UpdateSourceTrigger=PropertyChanged}" Margin="10">
-            <ComboBoxItem Content="Page 1" />
-            <ComboBoxItem Content="Page 2" />
-            <ComboBoxItem Content="Page 3" />
-            <ComboBoxItem Content="Page 4" />
-         </ComboBox>
 
          <TextBlock>Terminaison Courriel</TextBlock>
          <TextBox Text="{Binding TerminaisonCourriel, UpdateSourceTrigger=PropertyChanged}" Margin="10" />
