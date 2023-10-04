@@ -2,8 +2,9 @@
 using RecordETL.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Windows.Input;
+using OfficeOpenXml;
 
 namespace RecordETL.ViewModels
 {
@@ -110,7 +111,14 @@ namespace RecordETL.ViewModels
                     {
                         DataSourceColumns = new List<string>();
                         MembresSet = new MembresSet();
-                        DataSourceColumns = ExtractorService.ReadDataSourceColumnsNames(ExcelPath);
+
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        var fileInfo = new FileInfo(ExcelPath);
+                        using var package = new ExcelPackage(fileInfo);
+
+                        var Workbook = package.Workbook;
+
+                        DataSourceColumns = DataSourceService.ReadColumnsNames(Workbook);
                     },
                     o => _excelPath != "");
             }
@@ -123,9 +131,15 @@ namespace RecordETL.ViewModels
             {
                 return new RelayCommand(execute: _ =>
                 {
-                    var recordSet = 
-                        ExtractorService.ReadAndValidateMembres(ExcelPath, DataSourceIndexes, IsAmerican, TerminaisonCourriel);
-                    MembresSet = ValidatorService.Validate(recordSet);
+                    
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    var fileInfo = new FileInfo(ExcelPath);
+                    using var package = new ExcelPackage(fileInfo);
+
+                    var Workbook = package.Workbook;
+
+                    var recordSet = DataSourceService.ReadAndValidate(Workbook, DataSourceIndexes, IsAmerican, TerminaisonCourriel);
+                    MembresSet = DataSourceService.Validate(recordSet);
                 });
             }
         }
