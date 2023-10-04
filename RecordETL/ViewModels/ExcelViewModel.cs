@@ -2,16 +2,18 @@
 using RecordETL.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace RecordETL.ViewModels
 {
     public class ExcelViewModel : ViewModelBase
     {
+
         public ExcelViewModel()
         {
             SelectedColumns = new List<AttributeIndex>();
-            Type type = typeof(Record);
+            Type type = typeof(Membre);
 
             foreach (var property in type.GetProperties())
             {
@@ -67,11 +69,11 @@ namespace RecordETL.ViewModels
         }
 
 
-        private RecordSet _recordSet = new RecordSet();
-        public RecordSet RecordSet
+        private MembresSet _membresSet = new MembresSet();
+        public MembresSet MembresSet
         {
-            get => _recordSet;
-            set => SetField(ref _recordSet, value);
+            get => _membresSet;
+            set => SetField(ref _membresSet, value);
         }
 
         public ICommand? ExtractCommand
@@ -95,7 +97,9 @@ namespace RecordETL.ViewModels
                 return new RelayCommand(execute: _ =>
                 {
                     var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns, IsAmerican, TerminaisonCourriel);
-                    RecordSet = ValidatorService.Validate(recordSet);
+                    MembresSet = ValidatorService.Validate(recordSet);
+
+                    Debug.WriteLine("Validation done");
                 });
             }
         }
