@@ -3,7 +3,10 @@ using RecordETL.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecordETL.Services
 {
@@ -32,12 +35,12 @@ namespace RecordETL.Services
 
 
 
-        public static TransactionsSet ReadAndValidate(ExcelWorkbook workbook,
+        public static EmployeursSet ReadAndValidate(ExcelWorkbook workbook,
             List<AttributeIndex> positions)
         {
 
-            TransactionsSet Set = new TransactionsSet();
-            Set.Transactions = new List<Transaction>();
+            EmployeursSet Set = new EmployeursSet();
+            Set.Employeurs = new List<Employeur>();
             Set.Errors = new List<Models.Error>();
 
             var sheet = workbook.Worksheets[2];
@@ -56,123 +59,70 @@ namespace RecordETL.Services
 
                 if (empty) break;
 
-                var transaction = new Transaction();
-                Type type = typeof(Transaction);
-                transaction.Row = row;
+                var employeur = new Employeur();
+                Type type = typeof(Employeur);
+                employeur.Row = row;
 
                 foreach (var position in positions)
                 {
                     PropertyInfo propertyInfo = type.GetProperty(position.Name);
-                    propertyInfo.SetValue(transaction, GetColumnValue(row, position.Index, sheet));
+                    propertyInfo.SetValue(employeur, GetColumnValue(row, position.Index, sheet));
                 }
 
 
-
-                if (transaction.StartDate != null)
-                {
-                    var dateNaissance = FormatDate(transaction.StartDate);
-
-                    if (dateNaissance == null)
-                    {
-                        Error error = new Error()
-                        {
-                            Code = "ERR-006",
-                            Description_EN = "The date of start format is invalid",
-                            Description_FR = "Le format de la date de debut est invalide",
-                            RecordIndex = row
-                        };
-
-                        Set.Errors.Add(error);
-                    }
-                    else
-                    {
-                        transaction.StartDate = dateNaissance.Value.ToString("yyyy-MM-dd");
-                    }
-                }
-                else
-                {
-                    transaction.StartDate = "Inconnue";
-                }
-
-
-                if (transaction.EndDate != null)
-                {
-                    var dateAnciennete = FormatDate(transaction.EndDate);
-
-                    if (dateAnciennete == null)
-                    {
-                        Error error = new Error()
-                        {
-                            Code = "ERR-007",
-                            Description_EN = "The date of end format is invalid",
-                            Description_FR = "Le format de la date de fin est invalide",
-                            RecordIndex = row
-                        };
-
-                        Set.Errors.Add(error);
-                    }
-                    else
-                    {
-                        transaction.EndDate = dateAnciennete.Value.ToString("yyyy-MM-dd");
-                    }
-                }
-                else
-                {
-                    transaction.EndDate = "Inconnue";
-                }
-
-
-                if (transaction.DepositDate != null)
-                {
-                    var dateStatut = FormatDate(transaction.DepositDate);
-
-                    if (dateStatut == null)
-                    {
-                        Error error = new Error()
-                        {
-                            Code = "ERR-008",
-                            Description_EN = "The date of Deposit format is invalid",
-                            Description_FR = "Le format de la date de depot est invalide",
-                            RecordIndex = row
-                        };
-
-                        Set.Errors.Add(error);
-                    }
-                    else
-                    {
-                        transaction.DepositDate = dateStatut.Value.ToString("yyyy-MM-dd");
-                    }
-                }else {
-                    transaction.DepositDate = "Inconnue";
-                }
+                employeur.Telephone = employeur.Telephone != null ? Regex.Replace(employeur.Telephone, @"[^0-9]", "") : null;
                 
-                Set.Transactions.Add(transaction);
+                Set.Employeurs.Add(employeur);
+            }
+
+
+
+            var missingNumeroMembre = Set.Employeurs.Where(r => string.IsNullOrEmpty(r.Numero)).ToList();
+            for (int i = 0; i < missingNumeroMembre.Count; i++)
+            {
+                var record = missingNumeroMembre[i];
+
+                int number = i + 1;
+                string value = number < 10 ? $"00{number}" : number < 100 ? $"0{number}" : number.ToString();
+                record.Numero = $"SN-{value}";
+
+
+                var error = new Models.Error()
+                {
+                    Code = "ERR-001",
+                    Description_EN = "Employer Number is required",
+                    Description_FR = "Numero Employeur est requis",
+                    RecordIndex = record.Row
+                };
+
+                Set.Errors.Add(error);
+            }
+
+
+
+            // remove duplicates
+            var groupedRecords = from r in Set.Employeurs
+                group r by r.Numero into g
+                where g.Count() > 1
+                select g;
+
+            foreach (var group in groupedRecords)
+            {
+                var records = group.ToList();
+                for (int i = 0; i < records.Count; i++)
+                {
+                    var record = records[i];
+                    if (i > 0) // Do not modify the first membre
+                    {
+                        record.Numero = $"{record.Numero}-D{i}"; // Append D1, D2, D3, etc. to duplicates
+                    }
+                }
             }
 
             return Set;
         }
 
 
-
-        static DateTime? FormatDate(string date)
-        {
-            date = date.Trim();
-            date = date.Replace("'", "");
-
-            string[] formats = { "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy", "dd-MMM-yy" };
-            DateTime dt;
-            if (DateTime.TryParseExact(date, formats, new CultureInfo("fr-FR"), DateTimeStyles.None, out dt))
-            {
-                return dt;
-            }
-
-            if (DateTime.TryParseExact(date, formats, new CultureInfo("en-US"), DateTimeStyles.None, out dt))
-            {
-                return dt;
-            }
-
-            return null;
-        }
 
     }
 }
