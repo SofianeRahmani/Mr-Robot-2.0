@@ -108,7 +108,7 @@
                <TabControl Grid.Column="2">
 
                   <TabItem Header="Data">
-                     <DataGrid ItemsSource="{Binding TransactionsSet.Records}" AutoGenerateColumns="True"></DataGrid>
+                     <DataGrid ItemsSource="{Binding TransactionsSet.Transactions}" AutoGenerateColumns="True"></DataGrid>
                   </TabItem>
 
                   <TabItem Header="Errors">

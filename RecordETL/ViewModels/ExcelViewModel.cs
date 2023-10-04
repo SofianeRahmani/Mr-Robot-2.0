@@ -141,6 +141,9 @@ namespace RecordETL.ViewModels
 
                     var recordSet = DataSourceService.ReadAndValidate(Workbook, DataSourceIndexes, IsAmerican, TerminaisonCourriel);
                     MembresSet = DataSourceService.Validate(recordSet);
+
+                    TransactionsSet = TransactionsService.ReadAndValidate(Workbook, TransactionsIndexes);
+
                 });
             }
         }

@@ -3,19 +3,17 @@ using RecordETL.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace RecordETL.Services
 {
-    public class TransactionsService
+    public class EmployeursService
     {
 
         public static List<string> ReadColumnsNames(ExcelWorkbook workbook)
         {
             List<string> columns = new List<string>();
-            var worksheet = workbook.Worksheets[3];
+            var worksheet = workbook.Worksheets[2];
             if (worksheet.Dimension == null) return columns; // Return empty list if worksheet is empty
             for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
@@ -42,7 +40,7 @@ namespace RecordETL.Services
             Set.Transactions = new List<Transaction>();
             Set.Errors = new List<Models.Error>();
 
-            var sheet = workbook.Worksheets[3];
+            var sheet = workbook.Worksheets[2];
 
 
             for (int row = 2; row <= sheet.Dimension.End.Row; row++)
