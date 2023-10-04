@@ -2,6 +2,7 @@
 using RecordETL.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +13,7 @@ namespace RecordETL.Services
     public class ExtractorService
     {
 
-        public static List<string> ReadColumnsNames(string filePath, int pageIndex)
+        public static List<string> ReadDataSourceColumnsNames(string filePath)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -22,12 +23,10 @@ namespace RecordETL.Services
             using var package = new ExcelPackage(fileInfo);
 
             var workbook = package.Workbook;
-            var worksheet = workbook.Worksheets[pageIndex];
-
-
+            var worksheet = workbook.Worksheets[1];
+            
             if (worksheet.Dimension == null) return columns; // Return empty list if worksheet is empty
-
-
+            
             for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
                 columns.Add(worksheet.Cells[1, col].Text);
@@ -38,10 +37,12 @@ namespace RecordETL.Services
 
         public static string? GetColumnValue(int row, int column, ExcelWorksheet worksheet)
         {
-            return column != -1 ? worksheet.Cells[row, column + 1].Text : null;
+            return column != -1 ? worksheet.Cells[row, column + 1].Text.Trim() : null;
         }
 
-        public static MembresSet Extract(string filePath, int pageIndex, List<AttributeIndex> positions, bool isAmerican, string terminaisonCourriel)
+
+
+        public static MembresSet ExtractMembres(string filePath, List<AttributeIndex> positions, bool isAmerican, string terminaisonCourriel)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -53,21 +54,48 @@ namespace RecordETL.Services
             using var package = new ExcelPackage(fileInfo);
 
             var workbook = package.Workbook;
-            var worksheet = workbook.Worksheets[pageIndex];
 
 
-            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            var datasourceSheet = workbook.Worksheets[1];
+
+
+
+            List<string> fonctions = new List<string>();
+            var fonctionsSheet = workbook.Worksheets[7];
+
+            for (int row = 2; row <= fonctionsSheet.Dimension.End.Row; row++)
+            {
+                string value = GetColumnValue(row, 0, fonctionsSheet);
+
+                if (value == null || value == "") break;
+
+                fonctions.Add(value);
+            }
+
+            List<Tuple<string, string>> secteurs = new List<Tuple<string, string>>();
+            var secteursSheet = workbook.Worksheets[8];
+            for (int row = 2; row <= secteursSheet.Dimension.End.Row; row++)
+            {
+                string secteur_fr = GetColumnValue(row, 0, secteursSheet);
+                string secteur_en = GetColumnValue(row, 1, secteursSheet);
+
+                if ((secteur_fr == null || secteur_fr == "") && (secteur_en == null || secteur_en == "")) break;
+
+                secteurs.Add(new Tuple<string, string>(secteur_fr, secteur_en));
+            }
+
+            for (int row = 2; row <= datasourceSheet.Dimension.End.Row; row++)
             {
                 bool empty = true;
-                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                for (int col = 1; col <= datasourceSheet.Dimension.End.Column; col++)
                 {
-                    if (worksheet.Cells[row, col].Text != "")
+                    if (datasourceSheet.Cells[row, col].Text != "")
                     {
                         empty = false;
                     }
                 }
 
-                if(empty) break;
+                if (empty) break;
 
                 var person = new Membre();
                 Type type = typeof(Membre);
@@ -76,23 +104,59 @@ namespace RecordETL.Services
                 foreach (var position in positions)
                 {
                     PropertyInfo propertyInfo = type.GetProperty(position.Name);
-                    propertyInfo.SetValue(person, GetColumnValue(row, position.Index, worksheet));
+                    propertyInfo.SetValue(person, GetColumnValue(row, position.Index, datasourceSheet));
                 }
 
                 person.Nom = person.Nom?.Trim() + " " + person.SecondNom;
                 person.Prenom = person.Prenom?.Trim() + " " + person.SecondPrenom;
 
                 person.Telephone = FormatPhoneNumber(person.Telephone);
+                if (person.Telephone != null && person.Telephone.Length != 10)
+                {
+                    Error error = new Error()
+                    {
+                        Code = "ERR-002",
+                        Description_EN = "The phone number must be composed of 10 digits.",
+                        Description_FR = "Le numéro de téléphone doit être composé de 10 chiffres.",
+                        RecordIndex = row
+                    };
+
+                    membresSet.Errors.Add(error);
+                }
+
                 person.TelephoneTravail = FormatPhoneNumber(person.TelephoneTravail);
+                if (person.Telephone != null && person.Telephone.Length != 10)
+                {
+                    Error error = new Error()
+                    {
+                        Code = "ERR-003",
+                        Description_EN = "The work phone number must be composed of 10 digits.",
+                        Description_FR = "Le numéro de téléphone du travail doit être composé de 10 chiffres.",
+                        RecordIndex = row
+                    };
+                    membresSet.Errors.Add(error);
+                }
+
                 person.TelephoneCellulaire = FormatPhoneNumber(person.TelephoneCellulaire);
 
+                if (person.TelephoneCellulaire != null && person.TelephoneCellulaire.Length != 10)
+                {
+                    Error error = new Error()
+                    {
+                        Code = "ERR-004",
+                        Description_EN = "The cell phone number must be composed of 10 digits.",
+                        Description_FR = "Le numéro de téléphone cellulaire doit être composé de 10 chiffres.",
+                        RecordIndex = row
+                    };
+                    membresSet.Errors.Add(error);
+                }
 
-                /*
+
                 if (terminaisonCourriel == null)
                 {
                     person.CourrielTravail = person.CourrielTravail?.Trim();
                     person.CourrielPersonnel = person.CourrielPersonnel?.Trim();
-                    person.CourrielAutre = person.CourrielAutre?.Trim() ;
+                    person.CourrielAutre = person.CourrielAutre?.Trim();
                 }
                 else
                 {
@@ -116,7 +180,7 @@ namespace RecordETL.Services
                         membresSet.Errors.Add(error);
                     }
                 }
-                */
+
 
                 if (person.NumeroAppartement != null)
                 {
@@ -162,18 +226,15 @@ namespace RecordETL.Services
                         {
                             person.CodePostal = $"{person.CodePostal.Substring(0, 3)} {person.CodePostal.Substring(3, 3)}";
                         }
-
-
-
                     }
                 }
 
-                Regex dateRegex = new Regex(@"^\d{4}-\d{2}-\d{2}$");
+                
                 if (person.DateNaissance != null)
                 {
+                    var dateNaissance = FormatDate(person.DateNaissance);
 
-
-                    if (!dateRegex.IsMatch(person.DateNaissance))
+                    if (dateNaissance == null)
                     {
                         Error error = new Error()
                         {
@@ -185,14 +246,23 @@ namespace RecordETL.Services
 
                         membresSet.Errors.Add(error);
                     }
+                    else
+                    {
+                        person.DateNaissance = dateNaissance.Value.ToString("yyyy-MM-dd");
+                    }
+                }
+                else
+                {
+                    person.DateNaissance = "Inconnue";
                 }
 
 
                 if (person.DateAnciennete != null)
                 {
-                    if (!dateRegex.IsMatch(person.DateAnciennete))
-                    {
+                    var dateAnciennete = FormatDate(person.DateAnciennete);
 
+                    if (dateAnciennete == null)
+                    {
                         Error error = new Error()
                         {
                             Code = "ERR-007",
@@ -203,34 +273,129 @@ namespace RecordETL.Services
 
                         membresSet.Errors.Add(error);
                     }
+                    else
+                    {
+                        person.DateAnciennete = dateAnciennete.Value.ToString("yyyy-MM-dd");
+                    }
+                }
+                else
+                {
+                    person.DateAnciennete = "Inconnue";
                 }
 
 
                 if (person.DateStatut != null)
+                {
+                    var dateStatut = FormatDate(person.DateStatut);
+
+                    if (dateStatut == null)
+                    {
+                        Error error = new Error()
+                        {
+                            Code = "ERR-008",
+                            Description_EN = "The status date format is invalid",
+                            Description_FR = "Le format de la date de statut est invalide",
+                            RecordIndex = row
+                        };
+
+                        membresSet.Errors.Add(error);
+                    }
+                    else
+                    {
+                        person.DateStatut = dateStatut.Value.ToString("yyyy-MM-dd");
+                    }
+                }
+                else
+                {
                     person.DateStatut = "1900-01-01";
+                }
+
+
+                if (person.DateDebut != null)
+                {
+                    var dateDebutMandat = FormatDate(person.DateDebut);
+
+                    if (dateDebutMandat == null)
+                    {
+                        Error error = new Error()
+                        {
+                            Code = "ERR-009",
+                            Description_EN = "The mandate start date format is invalid",
+                            Description_FR = "Le format de la date de début de mandat est invalide",
+                            RecordIndex = row
+                        };
+
+                        membresSet.Errors.Add(error);
+                    }
+                    else
+                    {
+                        person.DateDebut = dateDebutMandat.Value.ToString("yyyy-MM-dd");
+                    }
+                }
+                else
+                {
+                    person.DateDebut = "Inconnue";
+                }
+
+
+
+                if (person.Fonction != null && fonctions.Count() > 0)
+                {
+                    if (!fonctions.Contains(person.Fonction))
+                    {
+                        person.Fonction = "";
+
+                        Error error = new Error()
+                        {
+                            Code = "ERR-008",
+                            Description_EN = "The function is invalid",
+                            Description_FR = "La fonction est invalide",
+                            RecordIndex = row
+                        };
+
+                        membresSet.Errors.Add(error);
+                    }
+                }
+
+
+                if (person.Secteur == null || person.Secteur == "")
+                {
+                    person.Secteur = "Général";
+                }
+                else
+                {
+                    if (secteurs.Any())
+                    {
+
+                        bool exist = false;
+                        foreach (var secteur in secteurs)
+                        {
+                            if (secteur.Item1 == person.Secteur || secteur.Item2 == person.Secteur)
+                            {
+                                exist = true;
+                                break;
+                            }
+                        }
+
+                        if (!exist)
+                        {
+                            Error error = new Error()
+                            {
+                                Code = "ERR-009",
+                                Description_EN = "The sector is invalid",
+                                Description_FR = "Le secteur est invalide",
+                                RecordIndex = row
+                            };
+
+                            membresSet.Errors.Add(error);
+                        }
+                    }
+                }
 
                 membresSet.Records.Add(person);
             }
 
 
-            if (membresSet.Records.Count(x => x.Secteur == "") == membresSet.Records.Count())
-            {
-
-                foreach (var record in membresSet.Records)
-                {
-                    record.Secteur = "Général";
-                }
-
-                Error error = new Error()
-                {
-                    Code = "ERR-008",
-                    Description_EN = "The sector is required",
-                    Description_FR = "Le secteur est requis",
-                    RecordIndex = 0
-                };
-
-                membresSet.Errors.Add(error);
-            }
 
             return membresSet;
         }
@@ -243,13 +408,30 @@ namespace RecordETL.Services
                 return phoneNumber;
             }
 
-            phoneNumber = Regex.Replace(phoneNumber, @"\D", "");
-            if (phoneNumber.Any(c => !char.IsDigit(c)))
+            // remove all non-numeric characters
+            phoneNumber = Regex.Replace(phoneNumber, @"[^0-9]", "");
+
+            return phoneNumber;
+        }
+
+        static DateTime? FormatDate(string date)
+        {
+            date = date.Trim();
+            date = date.Replace("'", "");
+
+            string[] formats = { "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy" };
+            DateTime dt;
+            if (DateTime.TryParseExact(date, formats, new CultureInfo("fr-FR"), DateTimeStyles.None, out dt))
             {
-                return phoneNumber;
+                return dt;
+            }
+            
+            if(DateTime.TryParseExact(date, formats, new CultureInfo("en-US"), DateTimeStyles.None, out dt))
+            {
+                return dt;
             }
 
-            return $"{phoneNumber.Substring(0, 3)}-{phoneNumber.Substring(3, 3)}-{phoneNumber.Substring(6, 4)}";
+            return null;
         }
 
     }
