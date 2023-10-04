@@ -119,6 +119,7 @@ namespace RecordETL.ViewModels
                         var Workbook = package.Workbook;
 
                         DataSourceColumns = DataSourceService.ReadColumnsNames(Workbook);
+                        TransactionsColumns = TransactionsService.ReadColumnsNames(Workbook);
                     },
                     o => _excelPath != "");
             }

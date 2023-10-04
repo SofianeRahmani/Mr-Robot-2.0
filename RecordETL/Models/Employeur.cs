@@ -2,7 +2,6 @@
 {
     public class Employeur
     {
-
         public int Row { get; set; }
 
         public string Numero { get; set; }
@@ -15,6 +14,5 @@
         public string InformationComplémentaire { get; set; }
 
         public string Telephone { get; set; }
-
     }
 }
