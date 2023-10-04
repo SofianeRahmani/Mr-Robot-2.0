@@ -17,14 +17,13 @@ namespace RecordETL.ViewModels
 
             foreach (var property in type.GetProperties())
             {
-                if (property.Name == "Row") continue;
+                if (property.Name == "Row" || property.Name == "Transactions") continue;
 
                 SelectedColumns.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
             }
-
-            //AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
         }
 
+        
         private bool _isAmerican = false;
         public bool IsAmerican
         {
@@ -46,12 +45,6 @@ namespace RecordETL.ViewModels
             set => SetField(ref _excelPath, value);
         }
 
-        private int _sheetIndex = 1;
-        public int SheetIndex
-        {
-            get => _sheetIndex;
-            set => SetField(ref _sheetIndex, value);
-        }
 
         private List<AttributeIndex> _selectedColumns = new List<AttributeIndex>();
         public List<AttributeIndex> SelectedColumns
@@ -83,7 +76,9 @@ namespace RecordETL.ViewModels
                 return
                     new RelayCommand(execute: _ =>
                     {
-                        AvailableColumns = ExtractorService.ReadColumnsNames(ExcelPath, SheetIndex);
+                        AvailableColumns = new List<string>();
+                        MembresSet = new MembresSet();
+                        AvailableColumns = ExtractorService.ReadDataSourceColumnsNames(ExcelPath);
                     },
                     o => _excelPath != "");
             }
@@ -96,7 +91,7 @@ namespace RecordETL.ViewModels
             {
                 return new RelayCommand(execute: _ =>
                 {
-                    var recordSet = ExtractorService.Extract(ExcelPath, SheetIndex, SelectedColumns, IsAmerican, TerminaisonCourriel);
+                    var recordSet = ExtractorService.ExtractMembres(ExcelPath, SelectedColumns, IsAmerican, TerminaisonCourriel);
                     MembresSet = ValidatorService.Validate(recordSet);
 
                     Debug.WriteLine("Validation done");

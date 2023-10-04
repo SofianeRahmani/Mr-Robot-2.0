@@ -15,16 +15,22 @@
       </Grid.RowDefinitions>
 
       <StackPanel>
-         <Button x:Name="DropArea" Content="{Binding ExcelPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Height="80"
+         <Button x:Name="DropArea" 
+                 Content="{Binding ExcelPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Margin="10" 
+                 Height="80" 
                  Click="DropArea_Click">
-            
          </Button>
+
+         <CheckBox IsChecked="{Binding IsAmerican, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            American ?
+         </CheckBox>
 
          <TextBlock>Terminaison Courriel</TextBlock>
          <TextBox Text="{Binding TerminaisonCourriel, UpdateSourceTrigger=PropertyChanged}" Margin="10" />
          
          <Button Command="{Binding ExtractCommand}" Margin="10">
-            Extract
+            ExtractMembres
          </Button>
 
          <Button Command="{Binding ValidateCommand}" Margin="10">
