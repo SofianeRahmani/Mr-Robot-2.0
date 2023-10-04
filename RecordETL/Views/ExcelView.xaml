@@ -58,11 +58,11 @@
          <TabControl Grid.Column="2">
 
             <TabItem Header="Data">
-               <DataGrid ItemsSource="{Binding RecordSet.Records}" AutoGenerateColumns="True"></DataGrid>
+               <DataGrid ItemsSource="{Binding MembresSet.Records}" AutoGenerateColumns="True"></DataGrid>
             </TabItem>
             
             <TabItem Header="Errors">
-               <DataGrid ItemsSource="{Binding RecordSet.Errors}" AutoGenerateColumns="True"></DataGrid>
+               <DataGrid ItemsSource="{Binding MembresSet.Errors}" AutoGenerateColumns="True"></DataGrid>
             </TabItem>
          </TabControl>
       </Grid>

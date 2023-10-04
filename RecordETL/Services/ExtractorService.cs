@@ -41,13 +41,13 @@ namespace RecordETL.Services
             return column != -1 ? worksheet.Cells[row, column + 1].Text : null;
         }
 
-        public static RecordSet Extract(string filePath, int pageIndex, List<AttributeIndex> positions, bool isAmerican, string TerminaisonCourriel)
+        public static MembresSet Extract(string filePath, int pageIndex, List<AttributeIndex> positions, bool isAmerican, string terminaisonCourriel)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            RecordSet recordSet = new RecordSet();
-            recordSet.Records = new List<Record>();
-            recordSet.Errors = new List<Models.Error>();
+            MembresSet membresSet = new MembresSet();
+            membresSet.Records = new List<Membre>();
+            membresSet.Errors = new List<Models.Error>();
 
             var fileInfo = new FileInfo(filePath);
             using var package = new ExcelPackage(fileInfo);
@@ -69,8 +69,8 @@ namespace RecordETL.Services
 
                 if(empty) break;
 
-                var person = new Record();
-                Type type = typeof(Record);
+                var person = new Membre();
+                Type type = typeof(Membre);
                 person.Row = row;
 
                 foreach (var position in positions)
@@ -86,7 +86,9 @@ namespace RecordETL.Services
                 person.TelephoneTravail = FormatPhoneNumber(person.TelephoneTravail);
                 person.TelephoneCellulaire = FormatPhoneNumber(person.TelephoneCellulaire);
 
-                if (TerminaisonCourriel == null)
+
+                /*
+                if (terminaisonCourriel == null)
                 {
                     person.CourrielTravail = person.CourrielTravail?.Trim();
                     person.CourrielPersonnel = person.CourrielPersonnel?.Trim();
@@ -94,7 +96,10 @@ namespace RecordETL.Services
                 }
                 else
                 {
-                    if (!person.CourrielTravail.EndsWith(TerminaisonCourriel))
+
+                    string? domain = person.CourrielTravail?.Split('@')[1];
+
+                    if (domain != null && !domain.Contains(terminaisonCourriel))
                     {
                         person.CourrielAutre = person.CourrielTravail;
                         person.CourrielTravail = null;
@@ -108,9 +113,10 @@ namespace RecordETL.Services
                             RecordIndex = row
                         };
 
-                        recordSet.Errors.Add(error);
+                        membresSet.Errors.Add(error);
                     }
                 }
+                */
 
                 if (person.NumeroAppartement != null)
                 {
@@ -134,7 +140,7 @@ namespace RecordETL.Services
                                 RecordIndex = row
                             };
 
-                            recordSet.Errors.Add(error);
+                            membresSet.Errors.Add(error);
                         }
 
                     }
@@ -150,7 +156,7 @@ namespace RecordETL.Services
                                 RecordIndex = row
                             };
 
-                            recordSet.Errors.Add(error);
+                            membresSet.Errors.Add(error);
                         }
                         else
                         {
@@ -177,7 +183,7 @@ namespace RecordETL.Services
                             RecordIndex = row
                         };
 
-                        recordSet.Errors.Add(error);
+                        membresSet.Errors.Add(error);
                     }
                 }
 
@@ -195,7 +201,7 @@ namespace RecordETL.Services
                             RecordIndex = row
                         };
 
-                        recordSet.Errors.Add(error);
+                        membresSet.Errors.Add(error);
                     }
                 }
 
@@ -203,14 +209,14 @@ namespace RecordETL.Services
                 if (person.DateStatut != null)
                     person.DateStatut = "1900-01-01";
 
-                recordSet.Records.Add(person);
+                membresSet.Records.Add(person);
             }
 
 
-            if (recordSet.Records.Count(x => x.Secteur == "") == recordSet.Records.Count())
+            if (membresSet.Records.Count(x => x.Secteur == "") == membresSet.Records.Count())
             {
 
-                foreach (var record in recordSet.Records)
+                foreach (var record in membresSet.Records)
                 {
                     record.Secteur = "Général";
                 }
@@ -223,10 +229,10 @@ namespace RecordETL.Services
                     RecordIndex = 0
                 };
 
-                recordSet.Errors.Add(error);
+                membresSet.Errors.Add(error);
             }
 
-            return recordSet;
+            return membresSet;
         }
 
 

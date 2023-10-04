@@ -2,7 +2,7 @@
 
 namespace RecordETL.Models
 {
-    public class Record
+    public class Membre
     {
         public int Row {get; set;}
 
@@ -13,14 +13,17 @@ namespace RecordETL.Models
         public string SecondPrenom { get; set; }
 
         public string Sexe { get; set; }
+
         public string CourrielTravail { get; set; }
         public string CourrielPersonnel { get; set; }
         public string CourrielAutre { get; set; }
+        
         public string Categorie{get; set; }
 
         public string Telephone { get; set; }
         public string TelephoneTravail { get; set; }
         public string TelephoneCellulaire { get; set; }
+
         public string NumeroAppartement { get; set; }
         public string Adresse { get; set; }
         public string Ville { get; set; }
@@ -28,7 +31,8 @@ namespace RecordETL.Models
         public string Pays { get; set; }
         public string CodePostal { get; set; }
         public string Nas { get; set; }
-        public string Categories { get; set; }
+        public string Categories1 { get; set; }
+        public string Categories2 { get; set; }
         public string DateNaissance { get; set; }
         public string DateAnciennete { get; set; }
         public string Anciennete { get; set; }
@@ -50,7 +54,7 @@ namespace RecordETL.Models
 
         public List<Transaction> Transactions { get; set; }
 
-        public Record()
+        public Membre()
         {
             Transactions = new List<Transaction>();
         }

@@ -2,9 +2,9 @@
 
 namespace RecordETL.Models
 {
-    public class RecordSet
+    public class MembresSet
     {
-        public List<Record> Records { get; set; }
+        public List<Membre> Records { get; set; }
         public List<Error> Errors { get; set; }
     }
 }
