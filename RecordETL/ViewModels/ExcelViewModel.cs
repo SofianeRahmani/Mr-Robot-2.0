@@ -10,20 +10,13 @@ namespace RecordETL.ViewModels
     public class ExcelViewModel : ViewModelBase
     {
 
-        public ExcelViewModel()
+        private string? _excelPath = @"";
+        public string? ExcelPath
         {
-            SelectedColumns = new List<AttributeIndex>();
-            Type type = typeof(Membre);
-
-            foreach (var property in type.GetProperties())
-            {
-                if (property.Name == "Row" || property.Name == "Transactions") continue;
-
-                SelectedColumns.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
-            }
+            get => _excelPath;
+            set => SetField(ref _excelPath, value);
         }
 
-        
         private bool _isAmerican = false;
         public bool IsAmerican
         {
@@ -38,27 +31,66 @@ namespace RecordETL.ViewModels
             set => SetField(ref _terminaisonCourriel, value);
         }
 
-        private string? _excelPath = @"";
-        public string? ExcelPath
+        public ExcelViewModel()
         {
-            get => _excelPath;
-            set => SetField(ref _excelPath, value);
+            DataSourceIndexes = new List<AttributeIndex>();
+            Type type = typeof(Membre);
+
+            foreach (var property in type.GetProperties())
+            {
+                if (property.Name == "Row" || property.Name == "Transactions") continue;
+
+                DataSourceIndexes.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
+            }
+
+
+            TransactionsIndexes = new List<AttributeIndex>();
+            type = typeof(Transaction);
+
+            foreach (var property in type.GetProperties())
+            {
+                if (property.Name == "Row") continue;
+
+                TransactionsIndexes.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
+            }
+        }
+
+        private List<AttributeIndex> _transactionsIndexes;
+        public List<AttributeIndex> TransactionsIndexes
+        {
+            get => _transactionsIndexes; 
+            set => SetField(ref _transactionsIndexes, value);
+        }
+
+        private List<string> _transactionsColumns = new List<string>();
+        public List<string> TransactionsColumns
+        {
+            get => _transactionsColumns;
+            set => SetField(ref _transactionsColumns, value);
         }
 
 
-        private List<AttributeIndex> _selectedColumns = new List<AttributeIndex>();
-        public List<AttributeIndex> SelectedColumns
+        private TransactionsSet _transactionsSet = new TransactionsSet();
+        public TransactionsSet TransactionsSet
         {
-            get => _selectedColumns;
-            set => SetField(ref _selectedColumns, value);
+            get => _transactionsSet;
+            set => SetField(ref _transactionsSet, value);
         }
 
 
-        private List<string> _availableColumns = new List<string>();
-        public List<string> AvailableColumns
+        private List<AttributeIndex> _dataSourceIndexes = new List<AttributeIndex>();
+        public List<AttributeIndex> DataSourceIndexes
         {
-            get => _availableColumns;
-            set => SetField(ref _availableColumns, value);
+            get => _dataSourceIndexes;
+            set => SetField(ref _dataSourceIndexes, value);
+        }
+
+
+        private List<string> _dataSourceColumns = new List<string>();
+        public List<string> DataSourceColumns
+        {
+            get => _dataSourceColumns;
+            set => SetField(ref _dataSourceColumns, value);
         }
 
 
@@ -76,9 +108,9 @@ namespace RecordETL.ViewModels
                 return
                     new RelayCommand(execute: _ =>
                     {
-                        AvailableColumns = new List<string>();
+                        DataSourceColumns = new List<string>();
                         MembresSet = new MembresSet();
-                        AvailableColumns = ExtractorService.ReadDataSourceColumnsNames(ExcelPath);
+                        DataSourceColumns = ExtractorService.ReadDataSourceColumnsNames(ExcelPath);
                     },
                     o => _excelPath != "");
             }
@@ -91,10 +123,9 @@ namespace RecordETL.ViewModels
             {
                 return new RelayCommand(execute: _ =>
                 {
-                    var recordSet = ExtractorService.ExtractMembres(ExcelPath, SelectedColumns, IsAmerican, TerminaisonCourriel);
+                    var recordSet = 
+                        ExtractorService.ReadAndValidateMembres(ExcelPath, DataSourceIndexes, IsAmerican, TerminaisonCourriel);
                     MembresSet = ValidatorService.Validate(recordSet);
-
-                    Debug.WriteLine("Validation done");
                 });
             }
         }

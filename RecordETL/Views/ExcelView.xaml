@@ -28,7 +28,7 @@
 
          <TextBlock>Terminaison Courriel</TextBlock>
          <TextBox Text="{Binding TerminaisonCourriel, UpdateSourceTrigger=PropertyChanged}" Margin="10" />
-         
+
          <Button Command="{Binding ExtractCommand}" Margin="10">
             ExtractMembres
          </Button>
@@ -38,39 +38,84 @@
          </Button>
       </StackPanel>
 
-      <Grid Grid.Row="1">
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-         </Grid.ColumnDefinitions>
 
-         <DataGrid ItemsSource="{Binding SelectedColumns}" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-               <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
+      <TabControl Grid.Row="1">
 
-               <DataGridTemplateColumn Header="Extracted Column Name">
-                  <DataGridTemplateColumn.CellTemplate>
-                     <DataTemplate>
-                        <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AvailableColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                     </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-               </DataGridTemplateColumn>
+         <TabItem Header="Datasource">
+            <Grid>
+               <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition />
+               </Grid.ColumnDefinitions>
 
-            </DataGrid.Columns>
-         </DataGrid>
+               <DataGrid ItemsSource="{Binding DataSourceIndexes}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  <DataGrid.Columns>
+                     <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
+
+                     <DataGridTemplateColumn Header="Extracted Column Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                           <DataTemplate>
+                              <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DataSourceColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                           </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                     </DataGridTemplateColumn>
+
+                  </DataGrid.Columns>
+               </DataGrid>
 
 
-         <TabControl Grid.Column="2">
+               <TabControl Grid.Column="2">
 
-            <TabItem Header="Data">
-               <DataGrid ItemsSource="{Binding MembresSet.Records}" AutoGenerateColumns="True"></DataGrid>
-            </TabItem>
-            
-            <TabItem Header="Errors">
-               <DataGrid ItemsSource="{Binding MembresSet.Errors}" AutoGenerateColumns="True"></DataGrid>
-            </TabItem>
-         </TabControl>
-      </Grid>
+                  <TabItem Header="Data">
+                     <DataGrid ItemsSource="{Binding MembresSet.Records}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+
+                  <TabItem Header="Errors">
+                     <DataGrid ItemsSource="{Binding MembresSet.Errors}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+               </TabControl>
+            </Grid>
+         </TabItem>
+
+
+         <TabItem Header="Transactions">
+
+            <Grid>
+               <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition />
+               </Grid.ColumnDefinitions>
+
+               <DataGrid ItemsSource="{Binding TransactionsIndexes}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  <DataGrid.Columns>
+                     <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
+
+                     <DataGridTemplateColumn Header="Extracted Columns">
+                        <DataGridTemplateColumn.CellTemplate>
+                           <DataTemplate>
+                              <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.TransactionsColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                           </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                     </DataGridTemplateColumn>
+
+                  </DataGrid.Columns>
+               </DataGrid>
+
+
+               <TabControl Grid.Column="2">
+
+                  <TabItem Header="Data">
+                     <DataGrid ItemsSource="{Binding TransactionsSet.Records}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+
+                  <TabItem Header="Errors">
+                     <DataGrid ItemsSource="{Binding TransactionsSet.Errors}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+               </TabControl>
+            </Grid>
+         </TabItem>
+      </TabControl>
    </Grid>
 </UserControl>
