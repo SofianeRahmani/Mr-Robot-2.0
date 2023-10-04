@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace RecordETL.Services
 {
-    public class DataSourceService
+    public class MembresService
     {
 
         public static List<string> ReadColumnsNames(ExcelWorkbook workbook)

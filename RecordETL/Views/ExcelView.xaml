@@ -50,14 +50,14 @@
                   <ColumnDefinition />
                </Grid.ColumnDefinitions>
 
-               <DataGrid ItemsSource="{Binding DataSourceIndexes}" AutoGenerateColumns="False" CanUserAddRows="False">
+               <DataGrid ItemsSource="{Binding MembresIndexes}" AutoGenerateColumns="False" CanUserAddRows="False">
                   <DataGrid.Columns>
                      <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
 
                      <DataGridTemplateColumn Header="Extracted Column Name">
                         <DataGridTemplateColumn.CellTemplate>
                            <DataTemplate>
-                              <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DataSourceColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                              <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.MembresColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                            </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                      </DataGridTemplateColumn>
@@ -113,6 +113,45 @@
 
                   <TabItem Header="Errors">
                      <DataGrid ItemsSource="{Binding TransactionsSet.Errors}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+               </TabControl>
+            </Grid>
+         </TabItem>
+
+
+         <TabItem Header="Employeurs">
+
+            <Grid>
+               <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition />
+               </Grid.ColumnDefinitions>
+
+               <DataGrid ItemsSource="{Binding EmployeursIndexes}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  <DataGrid.Columns>
+                     <DataGridTextColumn Header="Column Name" Binding="{Binding Name}" />
+
+                     <DataGridTemplateColumn Header="Extracted Columns">
+                        <DataGridTemplateColumn.CellTemplate>
+                           <DataTemplate>
+                              <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.EmployeurColumns, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                           </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                     </DataGridTemplateColumn>
+
+                  </DataGrid.Columns>
+               </DataGrid>
+
+
+               <TabControl Grid.Column="2">
+
+                  <TabItem Header="Data">
+                     <DataGrid ItemsSource="{Binding EmployeursSet.Employeurs}" AutoGenerateColumns="True"></DataGrid>
+                  </TabItem>
+
+                  <TabItem Header="Errors">
+                     <DataGrid ItemsSource="{Binding EmployeursSet.Errors}" AutoGenerateColumns="True"></DataGrid>
                   </TabItem>
                </TabControl>
             </Grid>
