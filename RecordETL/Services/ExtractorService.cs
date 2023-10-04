@@ -35,6 +35,24 @@ namespace RecordETL.Services
             return columns;
         }
 
+
+        public static List<string> ReadTransactionsColumnsNames(ExcelWorksheet worksheet)
+        {
+
+            List<string> columns = new List<string>();
+
+            if (worksheet.Dimension == null) return columns; // Return empty list if worksheet is empty
+            
+            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+            {
+                columns.Add(worksheet.Cells[1, col].Text);
+            }
+
+            return columns;
+        }
+
+
+
         public static string? GetColumnValue(int row, int column, ExcelWorksheet worksheet)
         {
             return column != -1 ? worksheet.Cells[row, column + 1].Text.Trim() : null;
@@ -42,7 +60,7 @@ namespace RecordETL.Services
 
 
 
-        public static MembresSet ExtractMembres(string filePath, List<AttributeIndex> positions, bool isAmerican, string terminaisonCourriel)
+        public static MembresSet ReadAndValidateMembres(string filePath, List<AttributeIndex> positions, bool isAmerican, string terminaisonCourriel)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -57,8 +75,6 @@ namespace RecordETL.Services
 
 
             var datasourceSheet = workbook.Worksheets[1];
-
-
 
             List<string> fonctions = new List<string>();
             var fonctionsSheet = workbook.Worksheets[7];
@@ -419,7 +435,7 @@ namespace RecordETL.Services
             date = date.Trim();
             date = date.Replace("'", "");
 
-            string[] formats = { "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy" };
+            string[] formats = { "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy", "dd-MMM-yy" };
             DateTime dt;
             if (DateTime.TryParseExact(date, formats, new CultureInfo("fr-FR"), DateTimeStyles.None, out dt))
             {

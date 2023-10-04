@@ -2,6 +2,9 @@
 {
     public class Transaction
     {
+
+        public int Row {get; set;}
+
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string DepositDate { get; set; }
