@@ -147,7 +147,16 @@ namespace RecordETL.Services
             return Set;
         }
 
-
-
+        internal static void ExportCSV(EmployeursSet employeursSet, string outputPath)
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter($"{outputPath}\\employeurs.csv"))
+            {
+                file.WriteLine("Numero,Nom,Adresse,Ville,Province,CodePostal,InformationComplémentaire,Telephone");
+                foreach (var record in employeursSet.Employeurs)
+                {
+                    file.WriteLine($"{record.Numero},{record.Nom},{record.Adresse},{record.Ville},{record.Province},{record.CodePostal},{record.InformationComplémentaire},{record.Telephone}");
+                }
+            }
+        }
     }
 }

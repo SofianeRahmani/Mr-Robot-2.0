@@ -177,7 +177,7 @@ namespace RecordETL.Services
                 {
                     if (isAmerican)
                     {
-                        if (person.CodePostal.Length != 5 || !Regex.IsMatch(person.CodePostal, @"^\d{5}$") )
+                        if (person.CodePostal.Length != 5 || !Regex.IsMatch(person.CodePostal, @"^\d{5}$"))
                         {
                             Error error = new Error()
                             {
@@ -498,6 +498,20 @@ namespace RecordETL.Services
             }
 
 
+        }
+
+
+        // exports the MembresSet into membres.csv
+        internal static void ExportCSV(MembresSet membresSet, string outputPath)
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter($"{outputPath}\\membres.csv"))
+            {
+                file.WriteLine("NumeroMembre,Nom,Prenom,DateNaissance,Telephone,TelephoneTravail,TelephoneCellulaire,CourrielTravail,CourrielPersonnel,CourrielAutre,Adresse,Ville,Province,CodePostal,DateAnciennete,DateStatut,DateDebut,Fonction,Secteur,Categorie");
+                foreach (var record in membresSet.Records)
+                {
+                    file.WriteLine($"{record.NumeroMembre},{record.Nom},{record.Prenom},{record.DateNaissance},{record.Telephone},{record.TelephoneTravail},{record.TelephoneCellulaire},{record.CourrielTravail},{record.CourrielPersonnel},{record.CourrielAutre},{record.Adresse},{record.Ville},{record.Province},{record.CodePostal},{record.DateAnciennete},{record.DateStatut},{record.DateDebut},{record.Fonction},{record.Secteur},{record.Categorie}");
+                }
+            }
         }
     }
 }
