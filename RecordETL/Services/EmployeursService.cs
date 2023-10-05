@@ -96,7 +96,7 @@ namespace RecordETL.Services
 
                     Set.Errors.Add(error);
                 }
-                
+
                 Set.Employeurs.Add(employeur);
             }
 
@@ -127,9 +127,9 @@ namespace RecordETL.Services
 
             // remove duplicates
             var groupedRecords = from r in Set.Employeurs
-                group r by r.Numero into g
-                where g.Count() > 1
-                select g;
+                                 group r by r.Numero into g
+                                 where g.Count() > 1
+                                 select g;
 
             foreach (var group in groupedRecords)
             {
@@ -156,6 +156,26 @@ namespace RecordETL.Services
                 {
                     file.WriteLine($"{record.Numero},{record.Nom},{record.Adresse},{record.Ville},{record.Province},{record.CodePostal},{record.InformationComplémentaire},{record.Telephone}");
                 }
+            }
+        }
+
+
+        // exports the MembresSet into membres.xlsx
+        internal static void ExportErrors(EmployeursSet employeursSet, ExcelWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Employeurs Errors");
+            worksheet.Cells["A1"].Value = "Code";
+            worksheet.Cells["B1"].Value = "Description EN";
+            worksheet.Cells["C1"].Value = "Description FR";
+            worksheet.Cells["D1"].Value = "Record Index";
+            int index = 2;
+            foreach (var error in employeursSet.Errors)
+            {
+                worksheet.Cells[$"A{index}"].Value = error.Code;
+                worksheet.Cells[$"B{index}"].Value = error.Description_EN;
+                worksheet.Cells[$"C{index}"].Value = error.Description_FR;
+                worksheet.Cells[$"D{index}"].Value = error.RecordIndex;
+                index++;
             }
         }
     }
