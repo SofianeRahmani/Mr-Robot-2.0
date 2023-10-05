@@ -1,12 +1,11 @@
-﻿using RecordETL.Models;
+﻿using OfficeOpenXml;
+using RecordETL.Models;
 using RecordETL.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Input;
-using OfficeOpenXml;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Windows;
+using System.Windows.Input;
 
 namespace RecordETL.ViewModels
 {
