@@ -137,7 +137,7 @@ namespace RecordETL.Services
                         transaction.DepositDate = dateStatut.Value.ToString("yyyy-MM-dd");
                     }
                 }
-                
+
                 Set.Transactions.Add(transaction);
             }
 
@@ -166,5 +166,16 @@ namespace RecordETL.Services
             return null;
         }
 
+        internal static void ExportCSV(TransactionsSet transactionsSet, string outputPath)
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter($"{outputPath}\\transactions.csv"))
+            {
+                file.WriteLine("NumeroMembre,StartDate,EndDate,DepositDate,Amount,Type,Account,Note,CompanyCode,HoursWorked,SourceOfPayment,WorkingGrossDues,ControlNo");
+                foreach (var record in transactionsSet.Transactions)
+                {
+                    file.WriteLine($"{record.NumeroMembre},{record.StartDate},{record.EndDate},{record.DepositDate},{record.Amount},{record.Type},{record.Account},{record.Note},{record.CompanyCode},{record.HoursWorked},{record.SourceOfPayment},{record.WorkingGrossDues},{record.ControlNo}");
+                }
+            }
+        }
     }
 }

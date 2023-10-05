@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace RecordETL.Views
@@ -34,7 +35,7 @@ namespace RecordETL.Views
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             // Process the Excel file, e.g., read its content.
-            
+
             ViewModel.ExcelPath = files[0];
         }
 
@@ -51,6 +52,18 @@ namespace RecordETL.Views
             }
 
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Users";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+
+                ViewModel.OutputPath = dialog.FileName;
+            }
         }
     }
 }
