@@ -31,8 +31,7 @@ namespace RecordETL.Models
         public string Pays { get; set; }
         public string CodePostal { get; set; }
         public string Nas { get; set; }
-        public string Categories1 { get; set; }
-        public string Categories2 { get; set; }
+        
         public string DateNaissance { get; set; }
         public string DateAnciennete { get; set; }
         public string Anciennete { get; set; }

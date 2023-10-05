@@ -144,12 +144,11 @@ namespace RecordETL.Services
                 }
                 else
                 {
-
                     string? domain = person.CourrielTravail?.Split('@')[1];
 
                     if (domain != null && !domain.Contains(terminaisonCourriel))
                     {
-                        person.CourrielAutre = person.CourrielTravail;
+                        person.CourrielPersonnel = person.CourrielTravail;
                         person.CourrielTravail = null;
 
 
@@ -178,7 +177,7 @@ namespace RecordETL.Services
                 {
                     if (isAmerican)
                     {
-                        if (person.CodePostal.Length != 5 || !Regex.IsMatch(person.CodePostal, @"^\d{5}$"))
+                        if (person.CodePostal.Length != 5 || !Regex.IsMatch(person.CodePostal, @"^\d{5}$") )
                         {
                             Error error = new Error()
                             {
@@ -194,7 +193,7 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        if (person.CodePostal.Length != 6 || !Regex.IsMatch(person.CodePostal, @"^[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d$"))
+                        if (person.CodePostal.Length != 6 || !Regex.IsMatch(person.CodePostal, @"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"))
                         {
                             Error error = new Error()
                             {
@@ -261,10 +260,6 @@ namespace RecordETL.Services
                     {
                         person.DateAnciennete = dateAnciennete.Value.ToString("yyyy-MM-dd");
                     }
-                }
-                else
-                {
-                    person.DateAnciennete = "Inconnue";
                 }
 
 
@@ -340,9 +335,13 @@ namespace RecordETL.Services
                         membresSet.Errors.Add(error);
                     }
                 }
+                else
+                {
+
+                }
 
 
-                if (person.Secteur == null || person.Secteur == "")
+                if (person.Secteur == null || person.Secteur == null)
                 {
                     person.Secteur = "Général";
                 }
@@ -464,6 +463,7 @@ namespace RecordETL.Services
                 int number = i + 1;
                 string value = number < 10 ? $"00{number}" : number < 100 ? $"0{number}" : number.ToString();
                 record.NumeroMembre = $"SN-{value}";
+                record.Categorie = "A valider- Sans numéro de membre";
             }
 
 
@@ -482,6 +482,7 @@ namespace RecordETL.Services
                     if (i > 0) // Do not modify the first membre
                     {
                         record.NumeroMembre = $"{record.NumeroMembre}-D{i}"; // Append D1, D2, D3, etc. to duplicates
+                        record.Categorie = " A valider- doublon de numéro de membre";
 
                         var error = new Error()
                         {

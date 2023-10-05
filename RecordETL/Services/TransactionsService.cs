@@ -72,9 +72,9 @@ namespace RecordETL.Services
 
                 if (transaction.StartDate != null)
                 {
-                    var dateNaissance = FormatDate(transaction.StartDate);
+                    var startDate = FormatDate(transaction.StartDate);
 
-                    if (dateNaissance == null)
+                    if (startDate == null)
                     {
                         Error error = new Error()
                         {
@@ -88,12 +88,8 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        transaction.StartDate = dateNaissance.Value.ToString("yyyy-MM-dd");
+                        transaction.StartDate = startDate.Value.ToString("yyyy-MM-dd");
                     }
-                }
-                else
-                {
-                    transaction.StartDate = "Inconnue";
                 }
 
 
@@ -118,10 +114,6 @@ namespace RecordETL.Services
                         transaction.EndDate = dateAnciennete.Value.ToString("yyyy-MM-dd");
                     }
                 }
-                else
-                {
-                    transaction.EndDate = "Inconnue";
-                }
 
 
                 if (transaction.DepositDate != null)
@@ -144,8 +136,6 @@ namespace RecordETL.Services
                     {
                         transaction.DepositDate = dateStatut.Value.ToString("yyyy-MM-dd");
                     }
-                }else {
-                    transaction.DepositDate = "Inconnue";
                 }
                 
                 Set.Transactions.Add(transaction);
