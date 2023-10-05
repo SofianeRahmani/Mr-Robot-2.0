@@ -46,6 +46,18 @@ namespace RecordETL.Services
             var sheet = workbook.Worksheets[2];
 
 
+            List<string> employeurs = new List<string>();
+            var fonctionsSheet = workbook.Worksheets[6];
+
+            for (int row = 2; row <= fonctionsSheet.Dimension.End.Row; row++)
+            {
+                string value = GetColumnValue(row, 1, fonctionsSheet);
+
+                if (value == null || value == "") break;
+
+                employeurs.Add(value);
+            }
+
             for (int row = 2; row <= sheet.Dimension.End.Row; row++)
             {
                 bool empty = true;
@@ -71,6 +83,19 @@ namespace RecordETL.Services
 
 
                 employeur.Telephone = employeur.Telephone != null ? Regex.Replace(employeur.Telephone, @"[^0-9]", "") : null;
+
+                if (!employeurs.Contains(employeur.Nom))
+                {
+                    var error = new Models.Error()
+                    {
+                        Code = "ERR-002",
+                        Description_EN = "Employer Name do not exists",
+                        Description_FR = "Nom Employeur n'est existe pas déjà",
+                        RecordIndex = employeur.Row
+                    };
+
+                    Set.Errors.Add(error);
+                }
                 
                 Set.Employeurs.Add(employeur);
             }
