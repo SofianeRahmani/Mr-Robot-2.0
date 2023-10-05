@@ -151,7 +151,7 @@ namespace RecordETL.Services
             date = date.Trim();
             date = date.Replace("'", "");
 
-            string[] formats = { "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy", "dd-MMM-yy" };
+            string[] formats = { "d/M/yy", "dd/MM/yyyy", "MM/dd/yyyy", "M/d/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "d MMMM yyyy", "dd MMMMM yyyy", "dd-MMM-yy" };
             DateTime dt;
             if (DateTime.TryParseExact(date, formats, new CultureInfo("fr-FR"), DateTimeStyles.None, out dt))
             {
@@ -175,6 +175,27 @@ namespace RecordETL.Services
                 {
                     file.WriteLine($"{record.NumeroMembre},{record.StartDate},{record.EndDate},{record.DepositDate},{record.Amount},{record.Type},{record.Account},{record.Note},{record.CompanyCode},{record.HoursWorked},{record.SourceOfPayment},{record.WorkingGrossDues},{record.ControlNo}");
                 }
+            }
+        }
+
+
+
+        // exports the MembresSet into membres.xlsx
+        internal static void ExportErrors(TransactionsSet transactionsSet, ExcelWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Transactions Errors");
+            worksheet.Cells["A1"].Value = "Code";
+            worksheet.Cells["B1"].Value = "Description EN";
+            worksheet.Cells["C1"].Value = "Description FR";
+            worksheet.Cells["D1"].Value = "Record Index";
+            int index = 2;
+            foreach (var error in transactionsSet.Errors)
+            {
+                worksheet.Cells[$"A{index}"].Value = error.Code;
+                worksheet.Cells[$"B{index}"].Value = error.Description_EN;
+                worksheet.Cells[$"C{index}"].Value = error.Description_FR;
+                worksheet.Cells[$"D{index}"].Value = error.RecordIndex;
+                index++;
             }
         }
     }

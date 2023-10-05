@@ -513,5 +513,25 @@ namespace RecordETL.Services
                 }
             }
         }
+
+
+        // exports the MembresSet into membres.xlsx
+        internal static void ExportErrors(MembresSet membresSet, ExcelWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Membres Errors");
+            worksheet.Cells["A1"].Value = "Code";
+            worksheet.Cells["B1"].Value = "Description EN";
+            worksheet.Cells["C1"].Value = "Description FR";
+            worksheet.Cells["D1"].Value = "Record Index";
+            int index = 2;
+            foreach (var error in membresSet.Errors)
+            {
+                worksheet.Cells[$"A{index}"].Value = error.Code;
+                worksheet.Cells[$"B{index}"].Value = error.Description_EN;
+                worksheet.Cells[$"C{index}"].Value = error.Description_FR;
+                worksheet.Cells[$"D{index}"].Value = error.RecordIndex;
+                index++;
+            }
+        }
     }
 }

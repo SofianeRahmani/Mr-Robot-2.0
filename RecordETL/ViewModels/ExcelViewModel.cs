@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Input;
 using OfficeOpenXml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Windows;
 
 namespace RecordETL.ViewModels
 {
@@ -206,11 +208,73 @@ namespace RecordETL.ViewModels
 
                 if (_outputPath != "")
                 {
-                    MembresService.ExportCSV(MembresSet, OutputPath);
-                    TransactionsService.ExportCSV(TransactionsSet, OutputPath);
-                    EmployeursService.ExportCSV(EmployeursSet, OutputPath);
+
+                    try
+                    {
+                        MembresService.ExportCSV(MembresSet, OutputPath);
+                        TransactionsService.ExportCSV(TransactionsSet, OutputPath);
+                        EmployeursService.ExportCSV(EmployeursSet, OutputPath);
+
+
+                        // Export Errors in a single excel file                    
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        var fileInfo = new FileInfo(OutputPath + "/Errors.xls");
+
+                        using var package = new ExcelPackage(fileInfo);
+                        var workbook = package.Workbook;
+
+                        MembresService.ExportErrors(MembresSet, workbook);
+                        TransactionsService.ExportErrors(TransactionsSet, workbook);
+                        EmployeursService.ExportErrors(EmployeursSet, workbook);
+
+
+                        // save the excel file
+                        package.SaveAs(fileInfo);
+                        package.Dispose();
+
+
+
+                        // Count the errors
+                        int dataCount = MembresSet.Records.Count + TransactionsSet.Transactions.Count + EmployeursSet.Employeurs.Count;
+                        int errorsCount = MembresSet.Errors.Count + TransactionsSet.Errors.Count + EmployeursSet.Errors.Count;
+                        int correctCount = dataCount - errorsCount;
+                        int indice = errorsCount * 100 / dataCount;
+
+                        var indiceFileInfo = new FileInfo(OutputPath + "/Indice.xls");
+
+                        var package1 = new ExcelPackage(indiceFileInfo);
+                        var workbook1 = package1.Workbook;
+
+
+                        var worksheet = workbook1.Worksheets.Add("Page 1");
+                        worksheet.Cells["A1"].Value = "Date et heure";
+                        worksheet.Cells["B1"].Value = "Nom du client";
+                        worksheet.Cells["C1"].Value = "Nombre total de données";
+                        worksheet.Cells["D1"].Value = "Données correcte";
+                        worksheet.Cells["E1"].Value = "Données erronées";
+                        worksheet.Cells["F1"].Value = "Indice de qualité";
+
+
+                        worksheet.Cells[$"A2"].Value = DateTime.Now.ToString("dd-MM-yyyy HH:ss");
+                        worksheet.Cells[$"B2"].Value = "";
+                        worksheet.Cells[$"C2"].Value = dataCount;
+                        worksheet.Cells[$"D2"].Value = correctCount;
+                        worksheet.Cells[$"E2"].Value = errorsCount;
+                        worksheet.Cells[$"F2"].Value = indice;
+
+
+                        // save the excel file
+                        package1.SaveAs(indiceFileInfo);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+
+                        MessageBox.Show(e.Message, "Impossible de générer les fichiers", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    }
+
                 }
-                // export CSV
             }
         }
     }
