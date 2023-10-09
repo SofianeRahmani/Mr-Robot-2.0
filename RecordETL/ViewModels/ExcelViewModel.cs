@@ -237,7 +237,7 @@ namespace RecordETL.ViewModels
                         int dataCount = MembresSet.Records.Count + TransactionsSet.Transactions.Count + EmployeursSet.Employeurs.Count;
                         int errorsCount = MembresSet.Errors.Count + TransactionsSet.Errors.Count + EmployeursSet.Errors.Count;
                         int correctCount = dataCount - errorsCount;
-                        int indice = errorsCount * 100 / dataCount;
+                        int indice = 100 - ( errorsCount * 100 / dataCount);
 
                         var indiceFileInfo = new FileInfo(OutputPath + "/Indice.xls");
 

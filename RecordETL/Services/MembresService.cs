@@ -81,21 +81,21 @@ namespace RecordETL.Services
 
                 if (empty) break;
 
-                var person = new Membre();
+                var membre = new Membre();
                 Type type = typeof(Membre);
-                person.Row = row;
+                membre.Row = row;
 
                 foreach (var position in positions)
                 {
                     PropertyInfo propertyInfo = type.GetProperty(position.Name);
-                    propertyInfo.SetValue(person, GetColumnValue(row, position.Index, datasourceSheet));
+                    propertyInfo.SetValue(membre, GetColumnValue(row, position.Index, datasourceSheet));
                 }
 
-                person.Nom = person.Nom?.Trim() + " " + person.SecondNom;
-                person.Prenom = person.Prenom?.Trim() + " " + person.SecondPrenom;
+                membre.Nom = membre.Nom?.Trim() + " " + membre.SecondNom;
+                membre.Prenom = membre.Prenom?.Trim() + " " + membre.SecondPrenom;
 
-                person.Telephone = FormatPhoneNumber(person.Telephone);
-                if (person.Telephone != null && person.Telephone.Length != 10)
+                membre.Telephone = FormatPhoneNumber(membre.Telephone);
+                if (membre.Telephone != null && membre.Telephone.Length != 10)
                 {
                     Error error = new Error()
                     {
@@ -108,8 +108,8 @@ namespace RecordETL.Services
                     membresSet.Errors.Add(error);
                 }
 
-                person.TelephoneTravail = FormatPhoneNumber(person.TelephoneTravail);
-                if (person.Telephone != null && person.Telephone.Length != 10)
+                membre.TelephoneTravail = FormatPhoneNumber(membre.TelephoneTravail);
+                if (membre.Telephone != null && membre.Telephone.Length != 10)
                 {
                     Error error = new Error()
                     {
@@ -121,9 +121,9 @@ namespace RecordETL.Services
                     membresSet.Errors.Add(error);
                 }
 
-                person.TelephoneCellulaire = FormatPhoneNumber(person.TelephoneCellulaire);
+                membre.TelephoneCellulaire = FormatPhoneNumber(membre.TelephoneCellulaire);
 
-                if (person.TelephoneCellulaire != null && person.TelephoneCellulaire.Length != 10)
+                if (membre.TelephoneCellulaire != null && membre.TelephoneCellulaire.Length != 10)
                 {
                     Error error = new Error()
                     {
@@ -138,18 +138,18 @@ namespace RecordETL.Services
 
                 if (terminaisonCourriel == null)
                 {
-                    person.CourrielTravail = person.CourrielTravail?.Trim();
-                    person.CourrielPersonnel = person.CourrielPersonnel?.Trim();
-                    person.CourrielAutre = person.CourrielAutre?.Trim();
+                    membre.CourrielTravail = membre.CourrielTravail?.Trim();
+                    membre.CourrielPersonnel = membre.CourrielPersonnel?.Trim();
+                    membre.CourrielAutre = membre.CourrielAutre?.Trim();
                 }
                 else
                 {
-                    string? domain = person.CourrielTravail?.Split('@')[1];
+                    string? domain = membre.CourrielTravail?.Split('@')[1];
 
                     if (domain != null && !domain.Contains(terminaisonCourriel))
                     {
-                        person.CourrielPersonnel = person.CourrielTravail;
-                        person.CourrielTravail = null;
+                        membre.CourrielPersonnel = membre.CourrielTravail;
+                        membre.CourrielTravail = null;
 
 
                         Error error = new Error()
@@ -165,19 +165,19 @@ namespace RecordETL.Services
                 }
 
 
-                if (person.NumeroAppartement != null)
+                if (membre.NumeroAppartement != null)
                 {
-                    person.Adresse = person.NumeroAppartement.Replace("#", "") + " " + person.Adresse?.Trim();
+                    membre.Adresse = membre.NumeroAppartement.Replace("#", "") + " " + membre.Adresse?.Trim();
                 }
 
 
 
 
-                if (person.CodePostal != null)
+                if (membre.CodePostal != null)
                 {
                     if (isAmerican)
                     {
-                        if (person.CodePostal.Length != 5 || !Regex.IsMatch(person.CodePostal, @"^\d{5}$"))
+                        if (membre.CodePostal.Length != 5 || !Regex.IsMatch(membre.CodePostal, @"^\d{5}$"))
                         {
                             Error error = new Error()
                             {
@@ -193,7 +193,7 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        if (person.CodePostal.Length != 6 || !Regex.IsMatch(person.CodePostal, @"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"))
+                        if (membre.CodePostal.Length != 6 || !Regex.IsMatch(membre.CodePostal, @"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"))
                         {
                             Error error = new Error()
                             {
@@ -207,15 +207,15 @@ namespace RecordETL.Services
                         }
                         else
                         {
-                            person.CodePostal = $"{person.CodePostal.Substring(0, 3)} {person.CodePostal.Substring(3, 3)}";
+                            membre.CodePostal = $"{membre.CodePostal.Substring(0, 3)} {membre.CodePostal.Substring(3, 3)}";
                         }
                     }
                 }
 
 
-                if (person.DateNaissance != null)
+                if (membre.DateNaissance != null)
                 {
-                    var dateNaissance = FormatDate(person.DateNaissance);
+                    var dateNaissance = FormatDate(membre.DateNaissance);
 
                     if (dateNaissance == null)
                     {
@@ -231,18 +231,18 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        person.DateNaissance = dateNaissance.Value.ToString("yyyy-MM-dd");
+                        membre.DateNaissance = dateNaissance.Value.ToString("yyyy-MM-dd");
                     }
                 }
                 else
                 {
-                    person.DateNaissance = "Inconnue";
+                    membre.DateNaissance = "Inconnue";
                 }
 
 
-                if (person.DateAnciennete != null)
+                if (membre.DateAnciennete != null)
                 {
-                    var dateAnciennete = FormatDate(person.DateAnciennete);
+                    var dateAnciennete = FormatDate(membre.DateAnciennete);
 
                     if (dateAnciennete == null)
                     {
@@ -258,14 +258,14 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        person.DateAnciennete = dateAnciennete.Value.ToString("yyyy-MM-dd");
+                        membre.DateAnciennete = dateAnciennete.Value.ToString("yyyy-MM-dd");
                     }
                 }
 
 
-                if (person.DateStatut != null)
+                if (membre.DateStatut != null)
                 {
-                    var dateStatut = FormatDate(person.DateStatut);
+                    var dateStatut = FormatDate(membre.DateStatut);
 
                     if (dateStatut == null)
                     {
@@ -281,18 +281,18 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        person.DateStatut = dateStatut.Value.ToString("yyyy-MM-dd");
+                        membre.DateStatut = dateStatut.Value.ToString("yyyy-MM-dd");
                     }
                 }
                 else
                 {
-                    person.DateStatut = "1900-01-01";
+                    membre.DateStatut = "1900-01-01";
                 }
 
 
-                if (person.DateDebut != null)
+                if (membre.DateDebut != null)
                 {
-                    var dateDebutMandat = FormatDate(person.DateDebut);
+                    var dateDebutMandat = FormatDate(membre.DateDebut);
 
                     if (dateDebutMandat == null)
                     {
@@ -308,21 +308,21 @@ namespace RecordETL.Services
                     }
                     else
                     {
-                        person.DateDebut = dateDebutMandat.Value.ToString("yyyy-MM-dd");
+                        membre.DateDebut = dateDebutMandat.Value.ToString("yyyy-MM-dd");
                     }
                 }
                 else
                 {
-                    person.DateDebut = "Inconnue";
+                    membre.DateDebut = "Inconnue";
                 }
 
 
 
-                if (person.Fonction != null && fonctions.Count() > 0)
+                if (membre.Fonction != null && fonctions.Count() > 0)
                 {
-                    if (!fonctions.Contains(person.Fonction))
+                    if (!fonctions.Contains(membre.Fonction))
                     {
-                        person.Fonction = "";
+                        membre.Fonction = "";
 
                         Error error = new Error()
                         {
@@ -341,19 +341,18 @@ namespace RecordETL.Services
                 }
 
 
-                if (person.Secteur == null || person.Secteur == null)
+                if (membre.Secteur == null || membre.Secteur == null)
                 {
-                    person.Secteur = "Général";
+                    membre.Secteur = "Général";
                 }
                 else
                 {
                     if (secteurs.Any())
                     {
-
                         bool exist = false;
                         foreach (var secteur in secteurs)
                         {
-                            if (secteur.Item1 == person.Secteur || secteur.Item2 == person.Secteur)
+                            if (secteur.Item1 == membre.Secteur || secteur.Item2 == membre.Secteur)
                             {
                                 exist = true;
                                 break;
@@ -375,7 +374,7 @@ namespace RecordETL.Services
                     }
                 }
 
-                membresSet.Records.Add(person);
+                membresSet.Records.Add(membre);
             }
 
 
