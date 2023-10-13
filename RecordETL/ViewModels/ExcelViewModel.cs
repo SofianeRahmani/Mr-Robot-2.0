@@ -187,10 +187,7 @@ namespace RecordETL.ViewModels
 
                     var recordSet = MembresService.ReadAndValidate(Workbook, MembresIndexes, IsAmerican, TerminaisonCourriel);
                     MembresSet = MembresService.Validate(recordSet);
-
                     TransactionsSet = TransactionsService.ReadAndValidate(Workbook, TransactionsIndexes);
-
-
                     EmployeursSet = EmployeursService.ReadAndValidate(Workbook, EmployeursIndexes);
 
                 });
@@ -222,22 +219,35 @@ namespace RecordETL.ViewModels
                         using var package = new ExcelPackage(fileInfo);
                         var workbook = package.Workbook;
 
+
+
                         MembresService.ExportErrors(MembresSet, workbook);
                         TransactionsService.ExportErrors(TransactionsSet, workbook);
                         EmployeursService.ExportErrors(EmployeursSet, workbook);
-
 
                         // save the excel file
                         package.SaveAs(fileInfo);
                         package.Dispose();
 
+                        // Export the other files
 
+                        fileInfo = new FileInfo(ExcelPath);
+                        using var package2 = new ExcelPackage(fileInfo);
+
+                        workbook = package2.Workbook;
+
+                        ConvertExcelToCsv(workbook.Worksheets[5], OutputPath + "/emplois.csv");
+                        ConvertExcelToCsv(workbook.Worksheets[7], OutputPath + "/fonctions.csv");
+                        ConvertExcelToCsv(workbook.Worksheets[8], OutputPath + "/secteurs.csv");
+                        ConvertExcelToCsv(workbook.Worksheets[9], OutputPath + "/pastilles.csv");
+
+                        package.Dispose();
 
                         // Count the errors
                         int dataCount = MembresSet.Records.Count + TransactionsSet.Transactions.Count + EmployeursSet.Employeurs.Count;
                         int errorsCount = MembresSet.Errors.Count + TransactionsSet.Errors.Count + EmployeursSet.Errors.Count;
                         int correctCount = dataCount - errorsCount;
-                        int indice = 100 - ( errorsCount * 100 / dataCount);
+                        int indice = 100 - (errorsCount * 100 / dataCount);
 
                         var indiceFileInfo = new FileInfo(OutputPath + "/Indice.xls");
 
@@ -264,6 +274,9 @@ namespace RecordETL.ViewModels
 
                         // save the excel file
                         package1.SaveAs(indiceFileInfo);
+
+
+
                     }
                     catch (Exception e)
                     {
@@ -275,6 +288,36 @@ namespace RecordETL.ViewModels
 
                 }
             }
+        }
+
+
+
+        public void ConvertExcelToCsv(ExcelWorksheet worksheet, string csvFilePath)
+        {
+            // Create a new CSV file to write to
+            using (var sw = new StreamWriter(csvFilePath))
+            {
+                for (int rowNum = 1; rowNum <= worksheet.Dimension.End.Row; rowNum++)
+                {
+                    var line = new List<string>();
+                    for (int colNum = 1; colNum <= worksheet.Dimension.End.Column; colNum++)
+                    {
+                        var cellValue = worksheet.Cells[rowNum, colNum].Text;
+
+                        // Check if the value contains a comma or newline; if so, wrap it in quotes
+                        if (cellValue.Contains(",") || cellValue.Contains("\n"))
+                        {
+                            cellValue = $"\"{cellValue.Replace("\"", "\"\"")}\"";
+                        }
+
+                        line.Add(cellValue);
+                    }
+
+                    var lineStr = string.Join(",", line);
+                    sw.WriteLine(lineStr);
+                }
+            }
+
         }
     }
 }
