@@ -24,9 +24,7 @@ namespace RecordETL.Services
 
             return columns;
         }
-
-
-
+        
         public static string? GetColumnValue(int row, int column, ExcelWorksheet worksheet)
         {
             return column != -1 ? worksheet.Cells[row, column + 1].Text.Trim() : null;
@@ -313,7 +311,7 @@ namespace RecordETL.Services
                 }
                 else
                 {
-                    membre.DateDebut = "Inconnue";
+                    membre.DateDebut = "1900-01-01";
                 }
 
 
