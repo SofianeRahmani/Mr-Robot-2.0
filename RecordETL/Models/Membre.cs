@@ -11,11 +11,17 @@ namespace RecordETL.Models
         public string? Nom { get; set; }
         public string? Prenom { get; set; }
 
+        public string? SecondNom {get; set; }
+
+        public string? SecondPrenom {get; set; }
+
         public string? Sexe { get; set; }
 
         public string? CourrielTravail { get; set; }
         public string? CourrielPersonnel { get; set; }
         public string? CourrielAutre { get; set; }
+
+        public string? NumeroAppartement {get; set; }
         
         public string? Categorie{get; set; }
 
@@ -29,8 +35,8 @@ namespace RecordETL.Models
         public string? CodePostal { get; set; }
         public string? Nas { get; set; }
         
-        public DateTime DateNaissance { get; set; }
-        public DateTime DateAnciennete { get; set; }
+        public string? DateNaissance { get; set; }
+        public string? DateAnciennete { get; set; }
         public string Anciennete { get; set; }
         public string Statut { get; set; }
         public string DateStatut { get; set; }
