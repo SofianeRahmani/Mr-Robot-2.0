@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RecordETL.Models
 {
@@ -6,34 +7,30 @@ namespace RecordETL.Models
     {
         public int Row {get; set;}
 
-        public string NumeroMembre { get; set; }
-        public string Nom { get; set; }
-        public string Prenom { get; set; }
-        public string SecondNom { get; set; }
-        public string SecondPrenom { get; set; }
+        public string? NumeroMembre { get; set; }
+        public string? Nom { get; set; }
+        public string? Prenom { get; set; }
 
-        public string Sexe { get; set; }
+        public string? Sexe { get; set; }
 
-        public string CourrielTravail { get; set; }
-        public string CourrielPersonnel { get; set; }
-        public string CourrielAutre { get; set; }
+        public string? CourrielTravail { get; set; }
+        public string? CourrielPersonnel { get; set; }
+        public string? CourrielAutre { get; set; }
         
-        public string Categorie{get; set; }
+        public string? Categorie{get; set; }
 
-        public string Telephone { get; set; }
-        public string TelephoneTravail { get; set; }
-        public string TelephoneCellulaire { get; set; }
-
-        public string NumeroAppartement { get; set; }
-        public string Adresse { get; set; }
-        public string Ville { get; set; }
-        public string Province { get; set; }
-        public string Pays { get; set; }
-        public string CodePostal { get; set; }
-        public string Nas { get; set; }
+        public string? Telephone { get; set; }
+        public string? TelephoneTravail { get; set; }
+        public string? TelephoneCellulaire { get; set; }
+        public string? Adresse { get; set; }
+        public string? Ville { get; set; }
+        public string? Province { get; set; }
+        public string? Pays { get; set; }
+        public string? CodePostal { get; set; }
+        public string? Nas { get; set; }
         
-        public string DateNaissance { get; set; }
-        public string DateAnciennete { get; set; }
+        public DateTime DateNaissance { get; set; }
+        public DateTime DateAnciennete { get; set; }
         public string Anciennete { get; set; }
         public string Statut { get; set; }
         public string DateStatut { get; set; }
