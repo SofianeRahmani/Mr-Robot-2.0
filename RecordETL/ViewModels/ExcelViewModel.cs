@@ -3,6 +3,7 @@ using RecordETL.Models;
 using RecordETL.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -11,8 +12,8 @@ namespace RecordETL.ViewModels
 {
     public class ExcelViewModel : ViewModelBase
     {
-
         private string? _excelPath = @"";
+
         public string? ExcelPath
         {
             get => _excelPath;
@@ -20,13 +21,22 @@ namespace RecordETL.ViewModels
         }
 
         private bool _isAmerican = false;
+
         public bool IsAmerican
         {
             get => _isAmerican;
             set => SetField(ref _isAmerican, value);
         }
+        private string _selectedSheet;
+        private ObservableCollection<string> _columnNames = new ObservableCollection<string>();
+        public ObservableCollection<string> ColumnNames
+        {
+            get => _columnNames;
+            set => SetField(ref _columnNames, value);
+        }
 
         private string _terminaisonCourriel;
+
         public string TerminaisonCourriel
         {
             get => _terminaisonCourriel;
@@ -44,7 +54,15 @@ namespace RecordETL.ViewModels
 
                 MembresIndexes.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
             }
+            EmploisIndex = new List<AttributeIndex>();
+            //type = typeof(emplois);
 
+            foreach (var property in type.GetProperties())
+            {
+                if (property.Name == "Row" || property.Name == "Transactions") continue;
+
+                MembresIndexes.Add(new AttributeIndex() { Name = property.Name, Index = -1 });
+            }
 
             TransactionsIndexes = new List<AttributeIndex>();
             type = typeof(Transaction);
@@ -68,6 +86,7 @@ namespace RecordETL.ViewModels
         }
 
         private List<AttributeIndex> _transactionsIndexes;
+
         public List<AttributeIndex> TransactionsIndexes
         {
             get => _transactionsIndexes;
@@ -75,6 +94,7 @@ namespace RecordETL.ViewModels
         }
 
         private List<string> _transactionsColumns = new List<string>();
+
         public List<string> TransactionsColumns
         {
             get => _transactionsColumns;
@@ -83,6 +103,7 @@ namespace RecordETL.ViewModels
 
 
         private TransactionsSet _transactionsSet = new TransactionsSet();
+
         public TransactionsSet TransactionsSet
         {
             get => _transactionsSet;
@@ -90,9 +111,8 @@ namespace RecordETL.ViewModels
         }
 
 
-
-
         private List<AttributeIndex> _membresIndexes = new List<AttributeIndex>();
+
         public List<AttributeIndex> MembresIndexes
         {
             get => _membresIndexes;
@@ -101,14 +121,30 @@ namespace RecordETL.ViewModels
 
 
         private List<string> _membresColumns = new List<string>();
+
         public List<string> MembresColumns
         {
             get => _membresColumns;
             set => SetField(ref _membresColumns, value);
         }
-
+        private List<AttributeIndex> _emploisIndexes = new List<AttributeIndex>();
+        
+        public List<AttributeIndex> EmploisIndex
+        {
+            get => _emploisIndexes;
+            set => SetField(ref _emploisIndexes, value);
+        }
+        
+        
+        private List<string> _emploisColumns = new List<string>();
+        public List<string> EmploisColumns
+        {
+            get => _emploisColumns;
+            set => SetField(ref _emploisColumns, value);
+        }
 
         private MembresSet _membresSet = new MembresSet();
+
         public MembresSet MembresSet
         {
             get => _membresSet;
@@ -116,9 +152,8 @@ namespace RecordETL.ViewModels
         }
 
 
-
-
         private List<AttributeIndex> _employeursIndexes = new List<AttributeIndex>();
+
         public List<AttributeIndex> EmployeursIndexes
         {
             get => _employeursIndexes;
@@ -127,6 +162,7 @@ namespace RecordETL.ViewModels
 
 
         private List<string> _employeurColumns = new List<string>();
+
         public List<string> EmployeurColumns
         {
             get => _employeurColumns;
@@ -135,39 +171,44 @@ namespace RecordETL.ViewModels
 
 
         private EmployeursSet _employeursSet = new EmployeursSet();
+
         public EmployeursSet EmployeursSet
         {
             get => _employeursSet;
             set => SetField(ref _employeursSet, value);
         }
 
-        public ICommand? ExtractCommand
+        public ICommand? ExtractSheetCommand
         {
             get
             {
                 return
                     new RelayCommand(execute: _ =>
-                    {
-                        MembresColumns = new List<string>();
-                        MembresSet = new MembresSet();
+                        {
+                            MembresColumns = new List<string>();
+                            MembresSet = new MembresSet();
+                            
+                            
 
-                        TransactionsColumns = new List<string>();
-                        TransactionsSet = new TransactionsSet();
+                            TransactionsColumns = new List<string>();
+                            TransactionsSet = new TransactionsSet();
 
-                        EmployeurColumns = new List<string>();
-                        EmployeursSet = new EmployeursSet();
+                            EmployeurColumns = new List<string>();
+                            EmployeursSet = new EmployeursSet();
 
-                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                        var fileInfo = new FileInfo(ExcelPath);
-                        using var package = new ExcelPackage(fileInfo);
 
-                        var workbook = package.Workbook;
+                            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                            var fileInfo = new FileInfo(ExcelPath);
+                            using var package = new ExcelPackage(fileInfo);
 
-                        MembresColumns = MembresService.ReadColumnsNames(workbook);
-                        TransactionsColumns = TransactionsService.ReadColumnsNames(workbook);
-                        EmployeurColumns = EmployeursService.ReadColumnsNames(workbook);
-                    },
-                    o => _excelPath != "");
+                            var workbook = package.Workbook;
+                            List<string> sheetNames = RecordETL.Services.ExcelService.ReadSheetNames(package.Workbook);
+
+                            //MembresColumns = MembresService.ReadColumnsNames(workbook, sheetNames);
+                            TransactionsColumns = TransactionsService.ReadColumnsNames(workbook);
+                            EmployeurColumns = EmployeursService.ReadColumnsNames(workbook);
+                        },
+                        o => _excelPath != "");
             }
         }
 
@@ -178,23 +219,23 @@ namespace RecordETL.ViewModels
             {
                 return new RelayCommand(execute: _ =>
                 {
-
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                     var fileInfo = new FileInfo(ExcelPath);
                     using var package = new ExcelPackage(fileInfo);
 
                     var Workbook = package.Workbook;
 
-                    var recordSet = MembresService.ReadAndValidate(Workbook, MembresIndexes, IsAmerican, TerminaisonCourriel);
+                    var recordSet =
+                        MembresService.ReadAndValidate(Workbook, MembresIndexes, IsAmerican, TerminaisonCourriel);
                     MembresSet = MembresService.Validate(recordSet);
                     TransactionsSet = TransactionsService.ReadAndValidate(Workbook, TransactionsIndexes);
                     EmployeursSet = EmployeursService.ReadAndValidate(Workbook, EmployeursIndexes);
-
                 });
             }
         }
 
         private string _outputPath = @"";
+
         public string OutputPath
         {
             get => _outputPath;
@@ -204,7 +245,6 @@ namespace RecordETL.ViewModels
 
                 if (_outputPath != "")
                 {
-
                     try
                     {
                         MembresService.ExportCSV(MembresSet, OutputPath);
@@ -212,7 +252,6 @@ namespace RecordETL.ViewModels
                         EmployeursService.ExportCSV(EmployeursSet, OutputPath);
 
 
-                        // Export Errors in a single excel file                    
                         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                         var fileInfo = new FileInfo(OutputPath + "/Errors.xls");
 
@@ -220,16 +259,14 @@ namespace RecordETL.ViewModels
                         var workbook = package.Workbook;
 
 
-
                         MembresService.ExportErrors(MembresSet, workbook);
                         TransactionsService.ExportErrors(TransactionsSet, workbook);
                         EmployeursService.ExportErrors(EmployeursSet, workbook);
 
-                        // save the excel file
+
                         package.SaveAs(fileInfo);
                         package.Dispose();
 
-                        // Export the other files
 
                         fileInfo = new FileInfo(ExcelPath);
                         using var package2 = new ExcelPackage(fileInfo);
@@ -244,8 +281,10 @@ namespace RecordETL.ViewModels
                         package.Dispose();
 
                         // Count the errors
-                        int dataCount = MembresSet.Records.Count + TransactionsSet.Transactions.Count + EmployeursSet.Employeurs.Count;
-                        int errorsCount = MembresSet.Errors.Count + TransactionsSet.Errors.Count + EmployeursSet.Errors.Count;
+                        int dataCount = MembresSet.Records.Count + TransactionsSet.Transactions.Count +
+                                        EmployeursSet.Employeurs.Count;
+                        int errorsCount = MembresSet.Errors.Count + TransactionsSet.Errors.Count +
+                                          EmployeursSet.Errors.Count;
                         int correctCount = dataCount - errorsCount;
                         int indice = 100 - (errorsCount * 100 / dataCount);
 
@@ -272,24 +311,18 @@ namespace RecordETL.ViewModels
                         worksheet.Cells[$"F2"].Value = indice;
 
 
-                        // save the excel file
                         package1.SaveAs(indiceFileInfo);
-
-
-
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
 
-                        MessageBox.Show(e.Message, "Impossible de générer les fichiers", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                        MessageBox.Show(e.Message, "Impossible de générer les fichiers", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                     }
-
                 }
             }
         }
-
 
 
         public void ConvertExcelToCsv(ExcelWorksheet worksheet, string csvFilePath)
@@ -304,7 +337,7 @@ namespace RecordETL.ViewModels
                     {
                         var cellValue = worksheet.Cells[rowNum, colNum].Text;
 
-                        // Check if the value contains a comma or newline; if so, wrap it in quotes
+
                         if (cellValue.Contains(",") || cellValue.Contains("\n"))
                         {
                             cellValue = $"\"{cellValue.Replace("\"", "\"\"")}\"";
@@ -317,7 +350,6 @@ namespace RecordETL.ViewModels
                     sw.WriteLine(lineStr);
                 }
             }
-
         }
     }
 }

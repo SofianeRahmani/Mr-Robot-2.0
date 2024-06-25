@@ -11,18 +11,31 @@ namespace RecordETL.Services
 {
     public class MembresService
     {
-
-        public static List<string> ReadColumnsNames(ExcelWorkbook workbook)
+        public static List<string> ReadSheetNames(ExcelWorkbook workbook)
         {
-            List<string> columns = new List<string>();
-            var worksheet = workbook.Worksheets[1];
-            if (worksheet.Dimension == null) return columns; // Return empty list if worksheet is empty
+            List<string> sheetNames = new List<string>();
+            foreach (var worksheet in workbook.Worksheets)
+            {
+                sheetNames.Add(worksheet.Name);
+            }
+            return sheetNames;
+        }
+        public static List<string> ReadColumnNames(ExcelWorkbook workbook, string sheetName)
+        {
+            List<string> columnNames = new List<string>();
+            var worksheet = workbook.Worksheets[sheetName]; 
+
+            if (worksheet == null) return columnNames; 
+            if (worksheet.Dimension == null) return columnNames; 
+
+            
             for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
-                columns.Add(worksheet.Cells[1, col].Text);
+                if (worksheet.Cells[2, col].Value != null) 
+                    columnNames.Add(worksheet.Cells[2, col].Text); 
             }
 
-            return columns;
+            return columnNames;
         }
         
         public static string? GetColumnValue(int row, int column, ExcelWorksheet worksheet)

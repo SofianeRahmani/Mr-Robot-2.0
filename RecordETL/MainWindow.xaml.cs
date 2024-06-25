@@ -22,6 +22,7 @@ namespace RecordETL
     {
         public MainWindow()
         {
+            AdonisUI.SpaceExtension.SetSpaceResourceOwnerFallback(this);
             InitializeComponent();
         }
     }

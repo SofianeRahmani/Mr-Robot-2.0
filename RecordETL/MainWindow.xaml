@@ -10,6 +10,6 @@
         Height="450" 
         Width="800">
     <Grid>
-       <views:ExcelView></views:ExcelView>
+       <views:LoginWindow></views:LoginWindow>
     </Grid>
 </Window>

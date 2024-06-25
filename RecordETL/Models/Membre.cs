@@ -48,7 +48,7 @@ namespace RecordETL.Models
         public string Fonction { get; set; }
         public string DateDebut { get; set; }
         public string DateFin { get; set; }
-        public string InfosComplementairesEmplois { get; set; }
+        public Dictionary<string,string> infosComplementaireMembres { get; set; }
 
 
         public Membre()
